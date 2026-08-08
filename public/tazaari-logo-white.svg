@@ -1,0 +1,21 @@
+<svg width="520" height="120" viewBox="0 0 520 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <g fill="#FFFFFF">
+    <circle cx="60" cy="60" r="56" fill="#FFFFFF" />
+    <circle cx="60" cy="23" r="4.5" fill="#5c81b3" />
+    <path d="M 14 55 Q 60 28 106 55" stroke="#5c81b3" stroke-width="4.5" fill="none" stroke-linecap="round" />
+    <path d="M 60 108 L 19 55 L 60 24 L 101 55 Z" stroke="#5c81b3" stroke-width="4.5" fill="none" stroke-linejoin="round" />
+    <line x1="60" y1="24" x2="60" y2="108" stroke="#5c81b3" stroke-width="4" />
+    <line x1="39.5" y1="39.5" x2="80.5" y2="81.5" stroke="#5c81b3" stroke-width="3.5" />
+    <line x1="80.5" y1="39.5" x2="39.5" y2="81.5" stroke="#5c81b3" stroke-width="3.5" />
+  </g>
+  <g fill="#FFFFFF">
+    <rect x="142" y="22" width="340" height="8" rx="2" />
+    <path d="M 142 30 V 98 H 158 V 56 Q 170 56 182 66 Q 194 76 194 98 H 210 Q 210 70 192 54 Q 176 40 158 40 V 30 Z" />
+    <path d="M 204 30 H 286 L 214 90 H 290 V 98 H 204 L 276 38 H 204 Z" />
+    <path d="M 292 98 L 324 30 H 336 L 368 98 H 350 L 342 80 H 318 L 310 98 Z M 322 70 H 338 L 330 50 Z" />
+    <path d="M 370 98 L 402 30 H 414 L 446 98 H 428 L 420 80 H 396 L 388 98 Z M 400 70 H 416 L 408 50 Z" />
+    <path d="M 448 30 H 478 Q 494 30 494 48 Q 494 62 480 66 L 498 98 H 480 L 464 68 H 464 V 98 H 448 Z M 464 42 V 58 H 476 Q 482 58 482 50 Q 482 42 476 42 Z" />
+    <path d="M 488 30 H 508 V 98 H 488 Z" />
+    <circle cx="498" cy="11" r="9" />
+  </g>
+</svg>
