@@ -6,11 +6,8 @@
 import type { WooProduct, NormalizedProduct } from '../types/product';
 import { normalizeProduct } from '../types/product';
 
-// In dev, Vite proxies /wc-api → https://tazaari.com/wp-json/wc/store/v1
-// In production, call the real URL directly (CORS is allowed from the same domain)
-const BASE_URL = import.meta.env.DEV
-  ? '/wc-api'
-  : 'https://tazaari.com/wp-json/wc/store/v1';
+// Proxy requests via Next.js rewrites to prevent CORS issues on both local and Vercel deployments
+const BASE_URL = '/wc-api';
 
 /** Query params accepted by the products endpoint */
 export interface FetchProductsParams {
