@@ -2,7 +2,9 @@
 
 import React, { useState } from 'react';
 import { useCart } from '../context/CartContext';
-import { X, Trash2, Plus, Minus, ShoppingBag, ShieldCheck, ArrowRight, Sparkles } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { X, Trash2, Plus, Minus, ShoppingBag, ShieldCheck, ArrowRight, Sparkles, Loader2 } from 'lucide-react';
+import { wcPriceToNumber } from '../services/wooCartApi';
 
 export const CartDrawer: React.FC = () => {
   const {
@@ -13,28 +15,70 @@ export const CartDrawer: React.FC = () => {
     updateQuantity,
     cartTotal,
     currency,
-    clearCart
+    wcCart,
+    isCartLoading,
+    cartError,
+    applyCoupon,
+    removeCoupon,
   } = useCart();
 
+  const router = useRouter();
   const [promoCode, setPromoCode] = useState('');
-  const [discountPercent, setDiscountPercent] = useState(0);
   const [promoError, setPromoError] = useState('');
-  const [isCheckedOut, setIsCheckedOut] = useState(false);
+  const [promoLoading, setPromoLoading] = useState(false);
 
-  const freeShippingThreshold = 250;
-  const progressPercent = Math.min((cartTotal / freeShippingThreshold) * 100, 100);
-  const remainingForFreeShipping = freeShippingThreshold - cartTotal;
+  // Use WooCommerce totals when available
+  const minorUnit = wcCart?.totals.currency_minor_unit ?? 2;
+  const subtotal = wcCart
+    ? wcPriceToNumber(wcCart.totals.total_items, minorUnit)
+    : cartTotal;
+  const totalDiscount = wcCart
+    ? wcPriceToNumber(wcCart.totals.total_discount, minorUnit)
+    : 0;
+  const totalShipping = wcCart
+    ? wcPriceToNumber(wcCart.totals.total_shipping, minorUnit)
+    : 0;
+  const totalTax = wcCart
+    ? wcPriceToNumber(wcCart.totals.total_tax, minorUnit)
+    : 0;
+  const grandTotal = wcCart
+    ? wcPriceToNumber(wcCart.totals.total_price, minorUnit)
+    : cartTotal;
 
-  const handleApplyPromo = () => {
-    if (promoCode.trim().toUpperCase() === 'TAZAARI15') {
-      setDiscountPercent(15);
-      setPromoError('');
-    } else {
-      setPromoError('Invalid promo code');
+  const appliedCoupons = wcCart?.coupons || [];
+  const freeShippingThreshold = 2500;
+  const progressPercent = Math.min((subtotal / freeShippingThreshold) * 100, 100);
+  const remainingForFreeShipping = freeShippingThreshold - subtotal;
+
+  const handleApplyPromo = async () => {
+    if (!promoCode.trim()) return;
+    setPromoLoading(true);
+    setPromoError('');
+    try {
+      await applyCoupon(promoCode.trim());
+      setPromoCode('');
+    } catch {
+      setPromoError('Invalid or expired promo code');
+    } finally {
+      setPromoLoading(false);
     }
   };
 
-  const finalTotal = cartTotal * (1 - discountPercent / 100);
+  const handleRemoveCoupon = async (code: string) => {
+    setPromoLoading(true);
+    try {
+      await removeCoupon(code);
+    } catch {
+      // Silently fail
+    } finally {
+      setPromoLoading(false);
+    }
+  };
+
+  const handleCheckout = () => {
+    setIsCartOpen(false);
+    router.push('/checkout');
+  };
 
   if (!isCartOpen) return null;
 
@@ -92,6 +136,21 @@ export const CartDrawer: React.FC = () => {
           </div>
         </div>
 
+        {/* Loading overlay */}
+        {isCartLoading && (
+          <div style={{ padding: '8px 24px', backgroundColor: '#FFF8E1', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.8rem', color: '#8D6E00' }}>
+            <Loader2 size={14} className="animate-spin" />
+            <span>Updating cart...</span>
+          </div>
+        )}
+
+        {/* Error banner */}
+        {cartError && (
+          <div style={{ padding: '8px 24px', backgroundColor: '#FFF0F0', color: '#C62828', fontSize: '0.8rem', fontWeight: 600 }}>
+            {cartError}
+          </div>
+        )}
+
         {/* Cart Item List */}
         <div style={{ flex: 1, overflowY: 'auto', padding: '20px 24px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
           {cart.length === 0 ? (
@@ -102,7 +161,7 @@ export const CartDrawer: React.FC = () => {
             </div>
           ) : (
             cart.map(item => (
-              <div key={`${item.product.id}-${item.selectedSize}-${item.selectedColor}`} style={{ display: 'flex', gap: '16px', paddingBottom: '16px', borderBottom: '1px solid var(--color-border)' }}>
+              <div key={item.wcKey || `${item.product.id}-${item.selectedSize}-${item.selectedColor}`} style={{ display: 'flex', gap: '16px', paddingBottom: '16px', borderBottom: '1px solid var(--color-border)' }}>
                 <img
                   src={item.product.images[0]}
                   alt={item.product.name}
@@ -110,12 +169,15 @@ export const CartDrawer: React.FC = () => {
                 />
                 <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                   <div>
-                    <h4 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.05rem', fontWeight: 600, lineHeight: 1.2 }}>{item.product.name}</h4>
+                    <h4 
+                      style={{ fontFamily: 'var(--font-serif)', fontSize: '1.05rem', fontWeight: 600, lineHeight: 1.2 }}
+                      dangerouslySetInnerHTML={{ __html: item.product.name }}
+                    />
                     <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginTop: '4px' }}>
                       Size: <strong>{item.selectedSize}</strong> | Color: <strong>{item.selectedColor}</strong>
                     </p>
                     <p style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--color-primary)', marginTop: '4px' }}>
-                      {currency}{item.product.price}
+                      {currency}{item.product.price.toFixed(2)}
                     </p>
                   </div>
 
@@ -124,6 +186,7 @@ export const CartDrawer: React.FC = () => {
                       <button
                         onClick={() => updateQuantity(item.product.id, item.selectedSize, item.selectedColor, -1)}
                         style={{ padding: '4px 8px', color: 'var(--color-primary)' }}
+                        disabled={isCartLoading}
                       >
                         <Minus size={14} />
                       </button>
@@ -131,6 +194,7 @@ export const CartDrawer: React.FC = () => {
                       <button
                         onClick={() => updateQuantity(item.product.id, item.selectedSize, item.selectedColor, 1)}
                         style={{ padding: '4px 8px', color: 'var(--color-primary)' }}
+                        disabled={isCartLoading}
                       >
                         <Plus size={14} />
                       </button>
@@ -139,6 +203,7 @@ export const CartDrawer: React.FC = () => {
                     <button
                       onClick={() => removeFromCart(item.product.id, item.selectedSize, item.selectedColor)}
                       style={{ color: 'var(--color-text-light)', transition: 'color 0.2s' }}
+                      disabled={isCartLoading}
                       onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--color-accent-rose)')}
                       onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--color-text-light)')}
                     >
@@ -155,73 +220,80 @@ export const CartDrawer: React.FC = () => {
         {cart.length > 0 && (
           <div style={{ padding: '20px 24px', borderTop: '1px solid var(--color-border)', backgroundColor: '#FAF8F5' }}>
             {/* Promo Code Input */}
-            <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
+            <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
               <input
                 type="text"
                 placeholder="Promo Code (e.g. TAZAARI15)"
                 value={promoCode}
                 onChange={(e) => setPromoCode(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleApplyPromo()}
                 style={{ flex: 1, padding: '8px 12px', border: '1px solid var(--color-border)', borderRadius: '2px', fontSize: '0.8125rem' }}
+                disabled={promoLoading || isCartLoading}
               />
-              <button onClick={handleApplyPromo} className="btn-secondary" style={{ padding: '8px 16px', fontSize: '0.75rem' }}>
-                Apply
+              <button
+                onClick={handleApplyPromo}
+                className="btn-secondary"
+                style={{ padding: '8px 16px', fontSize: '0.75rem' }}
+                disabled={promoLoading || isCartLoading}
+              >
+                {promoLoading ? '...' : 'Apply'}
               </button>
             </div>
-            {discountPercent > 0 && (
-              <p style={{ fontSize: '0.75rem', color: '#2B7A4B', fontWeight: 600, marginBottom: '8px' }}>
-                ✓ {discountPercent}% discount applied!
-              </p>
-            )}
+
+            {/* Applied coupons */}
+            {appliedCoupons.map(coupon => (
+              <div key={coupon.code} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.75rem', color: '#2B7A4B', fontWeight: 600, marginBottom: '8px', padding: '6px 10px', backgroundColor: '#E8F5E9', borderRadius: '4px' }}>
+                <span>✓ Coupon &quot;{coupon.code.toUpperCase()}&quot; applied</span>
+                <button
+                  onClick={() => handleRemoveCoupon(coupon.code)}
+                  style={{ color: '#C62828', fontSize: '0.7rem', cursor: 'pointer', border: 'none', background: 'none', textDecoration: 'underline' }}
+                  disabled={promoLoading}
+                >
+                  Remove
+                </button>
+              </div>
+            ))}
+
             {promoError && <p style={{ fontSize: '0.75rem', color: 'var(--color-accent-rose)', marginBottom: '8px' }}>{promoError}</p>}
 
             {/* Totals */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '16px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>
                 <span>Subtotal</span>
-                <span>{currency}{cartTotal.toFixed(2)}</span>
+                <span>{currency}{subtotal.toFixed(2)}</span>
               </div>
-              {discountPercent > 0 && (
+              {totalDiscount > 0 && (
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem', color: '#2B7A4B' }}>
-                  <span>VIP Discount ({discountPercent}%)</span>
-                  <span>-{currency}{(cartTotal * (discountPercent / 100)).toFixed(2)}</span>
+                  <span>Discount</span>
+                  <span>-{currency}{totalDiscount.toFixed(2)}</span>
                 </div>
               )}
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>
-                <span>Estimated Express Shipping</span>
-                <span>{remainingForFreeShipping <= 0 ? 'FREE' : `${currency}25.00`}</span>
+                <span>Shipping</span>
+                <span>{totalShipping === 0 ? 'FREE' : `${currency}${totalShipping.toFixed(2)}`}</span>
               </div>
+              {totalTax > 0 && (
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>
+                  <span>Tax</span>
+                  <span>{currency}{totalTax.toFixed(2)}</span>
+                </div>
+              )}
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '1.25rem', fontWeight: 700, color: 'var(--color-primary)', borderTop: '1px solid var(--color-border)', paddingTop: '10px' }}>
                 <span>Total</span>
-                <span>{currency}{(finalTotal + (remainingForFreeShipping <= 0 ? 0 : 25)).toFixed(2)}</span>
+                <span>{currency}{grandTotal.toFixed(2)}</span>
               </div>
             </div>
 
             {/* Checkout Action Button */}
-            {isCheckedOut ? (
-              <div style={{ padding: '12px', backgroundColor: '#E8F5E9', border: '1px solid #C8E6C9', borderRadius: '4px', textAlign: 'center' }}>
-                <p style={{ color: '#2E7D32', fontWeight: 700, fontSize: '0.95rem' }}>✨ Order Placed Successfully!</p>
-                <p style={{ fontSize: '0.75rem', color: '#388E3C', marginTop: '4px' }}>Thank you for choosing TAZAARI. Order confirmation sent to your email.</p>
-                <button
-                  onClick={() => {
-                    clearCart();
-                    setIsCheckedOut(false);
-                    setIsCartOpen(false);
-                  }}
-                  style={{ marginTop: '10px', fontSize: '0.75rem', textDecoration: 'underline', color: '#1B5E20' }}
-                >
-                  Continue Shopping
-                </button>
-              </div>
-            ) : (
-              <button
-                onClick={() => setIsCheckedOut(true)}
-                className="btn-gold"
-                style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
-              >
-                <span>PROCEED TO SECURE CHECKOUT</span>
-                <ArrowRight size={16} />
-              </button>
-            )}
+            <button
+              onClick={handleCheckout}
+              className="btn-gold"
+              style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+              disabled={isCartLoading}
+            >
+              <span>PROCEED TO SECURE CHECKOUT</span>
+              <ArrowRight size={16} />
+            </button>
 
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', marginTop: '12px', fontSize: '0.725rem', color: 'var(--color-text-muted)' }}>
               <ShieldCheck size={14} style={{ color: 'var(--color-gold)' }} />
