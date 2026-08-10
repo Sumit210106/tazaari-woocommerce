@@ -101,15 +101,14 @@ export const HeroSlider: React.FC = () => {
           />
         ))}
 
-        {/* Far Left Vertical Rotated Tag */}
         <div
           className="desktop-only"
           style={{
             position: 'absolute',
             left: '24px',
             top: '50%',
-            transform: 'translateY(-50%) rotate(-90deg)',
-            transformOrigin: 'left center',
+            transform: 'translateY(-50%) rotate(180deg)',
+            writingMode: 'vertical-rl',
             fontFamily: "'Urbanist', sans-serif",
             fontSize: '0.8125rem',
             fontWeight: 800,
@@ -155,43 +154,7 @@ export const HeroSlider: React.FC = () => {
               {heroSlides[currentSlideIndex].subtitle}
             </p> */}
 
-            <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
-              <a
-                href="#shop"
-                onClick={(e) => {
-                  e.preventDefault();
-                  setActiveCategory(heroSlides[currentSlideIndex].category);
-                  setActivePage('shop');
-                }}
-                aria-label={heroSlides[currentSlideIndex].ariaLabel}
-                style={{
-                  backgroundColor: 'rgba(100, 85, 70, 0.65)',
-                  backdropFilter: 'blur(8px)',
-                  color: '#FFFFFF',
-                  border: '1px solid rgba(255, 255, 255, 0.7)',
-                  padding: '14px 38px',
-                  fontSize: '0.875rem',
-                  fontWeight: 800,
-                  letterSpacing: '0.18em',
-                  textTransform: 'uppercase',
-                  borderRadius: '0px',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease',
-                  textDecoration: 'none',
-                  display: 'inline-block'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = '#FFFFFF';
-                  e.currentTarget.style.color = '#111111';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = 'rgba(100, 85, 70, 0.65)';
-                  e.currentTarget.style.color = '#FFFFFF';
-                }}
-              >
-                {heroSlides[currentSlideIndex].ariaLabel.replace('Shop ', '')}
-              </a>
-            </div>
+
 
           </div>
         </div>

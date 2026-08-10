@@ -5,6 +5,9 @@ import { useCart } from '../context/CartContext';
 import type { PageType } from '../context/CartContext';
 import { ShoppingBag, Heart, Search, ChevronDown, Menu, X, User, Sparkles } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { TazaariLogo } from './TazaariLogo';
+import { useAuth } from '../context/AuthContext';
 
 const NAVIGATION_CATEGORIES = [
   { slug: 'man', title: 'MAN', items: ['Polo T-Shirts', 'Oversized Tees', 'Essentials'] },
@@ -31,6 +34,16 @@ export const Navbar: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isUserModalOpen, setIsUserModalOpen] = useState(false);
+  const [modalTab, setModalTab] = useState<'login' | 'register'>('login');
+  const [modalEmail, setModalEmail] = useState('');
+  const [modalPassword, setModalPassword] = useState('');
+  const [modalFirstName, setModalFirstName] = useState('');
+  const [modalLastName, setModalLastName] = useState('');
+  const [modalError, setModalError] = useState('');
+  const [modalSuccess, setModalSuccess] = useState('');
+  const [modalLoading, setModalLoading] = useState(false);
+  
+  const { user, login, isAuthenticated } = useAuth();
   const router = useRouter();
 
   // Scroll Event Listener
@@ -59,13 +72,63 @@ export const Navbar: React.FC = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (window.location.pathname !== '/shop') {
+      router.push('/shop');
+      setActivePage('shop');
+    }
+  };
+
   const handleCategorySelect = (catSlug: string) => {
     setActiveCategory(catSlug);
     setActivePage('shop');
-    setIsShopDropdownOpen(false);
     setIsMobileMenuOpen(false);
+    setIsShopDropdownOpen(false);
     router.push('/shop');
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleModalSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setModalError('');
+    setModalSuccess('');
+    setModalLoading(true);
+
+    try {
+      if (modalTab === 'login') {
+        await login(modalEmail, modalPassword);
+        setIsUserModalOpen(false);
+        router.push('/account');
+      } else {
+        const response = await fetch('/api/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: modalEmail,
+            password: modalPassword,
+            firstName: modalFirstName,
+            lastName: modalLastName,
+          }),
+        });
+
+        const data = await response.json();
+        if (!response.ok) {
+          throw new Error(data.error || 'Registration failed.');
+        }
+
+        setModalSuccess('Account created successfully! Logging you in...');
+        await login(modalEmail, modalPassword);
+        setTimeout(() => {
+          setIsUserModalOpen(false);
+          router.push('/account');
+        }, 1500);
+      }
+    } catch (err: any) {
+      setModalError(err.message || 'An error occurred. Please try again.');
+    } finally {
+      setModalLoading(false);
+    }
   };
 
   return (
@@ -249,26 +312,39 @@ export const Navbar: React.FC = () => {
             {/* Search Toggle */}
             <div className="relative">
               {isSearchOpen ? (
-                <div className="flex items-center gap-2 bg-white px-3.5 py-1.5 rounded-[30px] shadow-[0_4px_15px_rgba(0,0,0,0.1)] animate-[searchExpand_0.25s_ease] absolute right-0 top-1/2 -translate-y-1/2 z-10 w-[180px] sm:w-[240px]">
-                  <Search size={14} className="text-[var(--color-primary)]" />
+                <form 
+                  onSubmit={handleSearchSubmit}
+                  className="flex items-center gap-2.5 bg-white rounded-full border border-black/5 shadow-[0_8px_30px_rgba(0,0,0,0.08)] animate-[searchExpand_0.25s_cubic-bezier(0.16,1,0.3,1)] absolute right-0 top-1/2 -translate-y-1/2 z-10 w-[200px] sm:w-[320px]"
+                  style={{ padding: '8px 18px' }}
+                >
+                  <Search size={14} className="text-[#121214] shrink-0" />
                   <input
                     type="text"
-                    placeholder="Search..."
+                    placeholder="Search our collections..."
                     value={searchQuery}
                     onChange={(e) => {
                       setSearchQuery(e.target.value);
-                      if (activePage !== 'shop') setActivePage('shop');
+                      if (window.location.pathname !== '/shop') {
+                        router.push('/shop');
+                        setActivePage('shop');
+                      }
                     }}
-                    className="border-0 outline-none text-[0.8rem] w-full text-[#111111] font-[family:var(--font-sans)]"
+                    className="border-0 outline-none text-[0.8rem] w-full text-[#121214] font-[family:var(--font-sans)] bg-transparent placeholder-gray-400"
+                    style={{ paddingLeft: '8px', paddingRight: '8px' }}
                     autoFocus
                   />
                   <button 
-                    onClick={() => setIsSearchOpen(false)} 
-                    className="border-0 bg-transparent text-[#888888] text-[0.75rem] cursor-pointer"
+                    type="button"
+                    onClick={() => {
+                      setSearchQuery('');
+                      setIsSearchOpen(false);
+                    }} 
+                    className="border-0 bg-transparent text-gray-400 hover:text-[#121214] text-[0.75rem] cursor-pointer flex items-center justify-center p-0.5"
+                    aria-label="Close search"
                   >
-                    ✕
+                    <X size={14} />
                   </button>
-                </div>
+                </form>
               ) : (
                 <button
                   onClick={() => setIsSearchOpen(true)}
@@ -282,11 +358,19 @@ export const Navbar: React.FC = () => {
 
             {/* Account Account Login (Hidden on Mobile, shown in mobile drawer) */}
             <button
-              onClick={() => setIsUserModalOpen(true)}
+              onClick={() => {
+                if (isAuthenticated) {
+                  router.push('/account');
+                } else {
+                  setModalError('');
+                  setModalSuccess('');
+                  setIsUserModalOpen(true);
+                }
+              }}
               className="hidden md:inline-flex bg-transparent border-0 text-white p-1.5 cursor-pointer"
               title="Account"
             >
-              <User size={20} />
+              <User size={20} color="#FFFFFF" />
             </button>
 
             {/* Wishlist Link (Hidden on Mobile, shown in mobile drawer) */}
@@ -368,10 +452,19 @@ export const Navbar: React.FC = () => {
           {/* Account and Wishlist options for mobile viewports */}
           <div className="border-t border-gray-100 pt-4 flex flex-col gap-4 md:hidden">
             <button 
-              onClick={() => { setIsMobileMenuOpen(false); setIsUserModalOpen(true); }}
+              onClick={() => { 
+                setIsMobileMenuOpen(false); 
+                if (isAuthenticated) {
+                  router.push('/account');
+                } else {
+                  setModalError('');
+                  setModalSuccess('');
+                  setIsUserModalOpen(true); 
+                }
+              }}
               className="text-left text-[0.9rem] font-extrabold text-[#111111] border-0 bg-transparent tracking-[0.12em] uppercase flex items-center gap-2"
             >
-              <User size={16} /> My Account
+              <User size={16} /> {isAuthenticated ? 'My Account' : 'Log In'}
             </button>
             <button 
               onClick={() => handleCategorySelect('all')} 
@@ -385,25 +478,246 @@ export const Navbar: React.FC = () => {
 
       {/* User Login Popover / Modal */}
       {isUserModalOpen && (
-        <div className="fixed inset-0 z-[1100] flex items-center justify-center p-5">
-          <div className="fixed inset-0 bg-black/60 backdrop-blur-[4px]" onClick={() => setIsUserModalOpen(false)} />
-
-          <div className="relative bg-white w-full max-w-[400px] rounded-none p-9 z-[1101] shadow-[0_16px_40px_rgba(0,0,0,0.12)] text-[#111111]">
-            <div className="flex justify-between items-center mb-6">
-              <h3 className="font-[family:var(--font-serif)] text-[1.5rem] font-semibold">VIP Client Login</h3>
-              <button onClick={() => setIsUserModalOpen(false)} className="border-0 bg-transparent text-[1.1rem] cursor-pointer">✕</button>
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          zIndex: 1100,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '20px'
+        }}>
+          {/* Blur Overlay */}
+          <div 
+            onClick={() => setIsUserModalOpen(false)} 
+            style={{
+              position: 'fixed',
+              inset: 0,
+              backgroundColor: 'rgba(0, 0, 0, 0.6)',
+              backdropFilter: 'blur(4px)',
+              cursor: 'pointer'
+            }}
+          />
+ 
+          {/* Modal Container */}
+          <div style={{
+            position: 'relative',
+            backgroundColor: '#FFFFFF',
+            width: '100%',
+            maxWidth: '420px',
+            borderRadius: '8px',
+            padding: '40px 36px 36px',
+            zIndex: 1101,
+            boxShadow: '0 20px 50px rgba(0,0,0,0.15)',
+            color: '#111111',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '24px',
+            fontFamily: 'var(--font-sans)'
+          }}>
+            
+            {/* Logo and Close Button */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ transform: 'scale(0.85)', transformOrigin: 'left center' }}>
+                <TazaariLogo color="#121214" height={36} />
+              </div>
+              <button 
+                onClick={() => setIsUserModalOpen(false)} 
+                style={{
+                  border: 0,
+                  background: 'transparent',
+                  fontSize: '1.2rem',
+                  cursor: 'pointer',
+                  color: '#999999',
+                  transition: 'color 0.2s ease',
+                  padding: '4px'
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.color = '#111111'}
+                onMouseLeave={(e) => e.currentTarget.style.color = '#999999'}
+              >
+                ✕
+              </button>
             </div>
-            <form onSubmit={(e) => { e.preventDefault(); setIsUserModalOpen(false); }} className="flex flex-col gap-4">
-              <div>
-                <label className="block text-[0.75rem] font-bold uppercase tracking-[0.08em] mb-1.5">Email Address</label>
-                <input type="email" required placeholder="vip@tazaari.com" className="w-full p-3 border border-[var(--color-border)] outline-none font-[family:var(--font-sans)] text-sm" />
+
+            {/* Tabs for Login / Register */}
+            <div style={{ display: 'flex', borderBottom: '1px solid #E8E2D9', marginBottom: '4px' }}>
+              <button
+                type="button"
+                onClick={() => { setModalTab('login'); setModalError(''); setModalSuccess(''); }}
+                style={{
+                  flex: 1,
+                  paddingBottom: '12px',
+                  fontSize: '0.85rem',
+                  fontWeight: 700,
+                  letterSpacing: '0.12em',
+                  textTransform: 'uppercase',
+                  border: 0,
+                  borderBottom: modalTab === 'login' ? '2px solid #121214' : '2px solid transparent',
+                  color: modalTab === 'login' ? '#121214' : '#999999',
+                  textAlign: 'center',
+                  cursor: 'pointer',
+                  background: 'transparent',
+                  fontFamily: 'inherit'
+                }}
+              >
+                Sign In
+              </button>
+              <button
+                type="button"
+                onClick={() => { setModalTab('register'); setModalError(''); setModalSuccess(''); }}
+                style={{
+                  flex: 1,
+                  paddingBottom: '12px',
+                  fontSize: '0.85rem',
+                  fontWeight: 700,
+                  letterSpacing: '0.12em',
+                  textTransform: 'uppercase',
+                  border: 0,
+                  borderBottom: modalTab === 'register' ? '2px solid #121214' : '2px solid transparent',
+                  color: modalTab === 'register' ? '#121214' : '#999999',
+                  textAlign: 'center',
+                  cursor: 'pointer',
+                  background: 'transparent',
+                  fontFamily: 'inherit'
+                }}
+              >
+                Register
+              </button>
+            </div>
+
+            {/* Notifications */}
+            {modalError && (
+              <div style={{
+                padding: '12px',
+                backgroundColor: '#FFF0F0',
+                border: '1px solid #FFCDD2',
+                color: '#C62828',
+                borderRadius: '4px',
+                fontSize: '0.75rem',
+                fontWeight: 600
+              }}>
+                {modalError}
               </div>
-              <div>
-                <label className="block text-[0.75rem] font-bold uppercase tracking-[0.08em] mb-1.5">Password</label>
-                <input type="password" required placeholder="••••••••" className="w-full p-3 border border-[var(--color-border)] outline-none font-[family:var(--font-sans)] text-sm" />
+            )}
+            {modalSuccess && (
+              <div style={{
+                padding: '12px',
+                backgroundColor: '#E8F5E9',
+                border: '1px solid #C8E6C9',
+                color: '#2E7D32',
+                borderRadius: '4px',
+                fontSize: '0.75rem',
+                fontWeight: 600
+              }}>
+                {modalSuccess}
               </div>
-              <button type="submit" className="w-full h-12 mt-2.5 bg-[#111111] text-white border-0 font-extrabold text-[0.8rem] tracking-[0.12em] cursor-pointer hover:bg-[var(--color-gold)] hover:text-[#111111] transition-colors duration-300">
-                SIGN IN
+            )}
+
+            {/* Modal Form */}
+            <form onSubmit={handleModalSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              {modalTab === 'register' && (
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.08em', marginBottom: '6px', color: '#666666', textTransform: 'uppercase' }}>First Name</label>
+                    <input 
+                      type="text" 
+                      value={modalFirstName}
+                      onChange={(e) => setModalFirstName(e.target.value)}
+                      placeholder="Sumit" 
+                      style={{
+                        width: '100%',
+                        padding: '10px 12px',
+                        border: '1px solid #E8E2D9',
+                        borderRadius: '4px',
+                        outline: 'none',
+                        fontSize: '0.85rem'
+                      }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.08em', marginBottom: '6px', color: '#666666', textTransform: 'uppercase' }}>Last Name</label>
+                    <input 
+                      type="text" 
+                      value={modalLastName}
+                      onChange={(e) => setModalLastName(e.target.value)}
+                      placeholder="Nayak" 
+                      style={{
+                        width: '100%',
+                        padding: '10px 12px',
+                        border: '1px solid #E8E2D9',
+                        borderRadius: '4px',
+                        outline: 'none',
+                        fontSize: '0.85rem'
+                      }}
+                    />
+                  </div>
+                </div>
+              )}
+
+              <div>
+                <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.08em', marginBottom: '6px', color: '#666666', textTransform: 'uppercase' }}>Email Address</label>
+                <input 
+                  type="email" 
+                  required 
+                  value={modalEmail}
+                  onChange={(e) => setModalEmail(e.target.value)}
+                  placeholder="vip@tazaari.com" 
+                  style={{
+                    width: '100%',
+                    padding: '10px 12px',
+                    border: '1px solid #E8E2D9',
+                    borderRadius: '4px',
+                    outline: 'none',
+                    fontSize: '0.85rem'
+                  }}
+                />
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.08em', marginBottom: '6px', color: '#666666', textTransform: 'uppercase' }}>Password</label>
+                <input 
+                  type="password" 
+                  required 
+                  value={modalPassword}
+                  onChange={(e) => setModalPassword(e.target.value)}
+                  placeholder="••••••••" 
+                  style={{
+                    width: '100%',
+                    padding: '10px 12px',
+                    border: '1px solid #E8E2D9',
+                    borderRadius: '4px',
+                    outline: 'none',
+                    fontSize: '0.85rem'
+                  }}
+                />
+              </div>
+
+              <button 
+                type="submit" 
+                disabled={modalLoading}
+                style={{
+                  width: '100%',
+                  height: '46px',
+                  marginTop: '10px',
+                  backgroundColor: '#121214',
+                  color: '#FFFFFF',
+                  border: 0,
+                  borderRadius: '4px',
+                  fontWeight: 800,
+                  fontSize: '0.8rem',
+                  letterSpacing: '0.12em',
+                  textTransform: 'uppercase',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
+                  transition: 'background-color 0.2s ease'
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#C5A059'}
+                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#121214'}
+              >
+                {modalLoading ? 'PROCESSING...' : modalTab === 'login' ? 'SIGN IN' : 'CREATE ACCOUNT'}
               </button>
             </form>
           </div>
