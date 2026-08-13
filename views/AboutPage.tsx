@@ -92,7 +92,7 @@ export const AboutPage: React.FC = () => {
       `}</style>
 
       {/* SECTION 1: HERO EDITORIAL COLLAGE */}
-      <section style={{ padding: '100px 24px 80px', maxWidth: '1280px', margin: '0 auto', textAlign: 'center', position: 'relative' }}>
+      <section style={{ padding: '160px 24px 80px', maxWidth: '1280px', margin: '0 auto', textAlign: 'center', position: 'relative' }}>
 
         {/* Giant Backdrop Header */}
         <h1 className="editorial-title">
