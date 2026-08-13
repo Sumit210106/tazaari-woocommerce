@@ -1,30 +1,30 @@
 "use client";
 
 import React, { useState } from 'react';
-import { 
-  Phone, 
-  Mail, 
-  MapPin, 
-  Calendar, 
-  CheckCircle2, 
-  ChevronDown, 
-  Sparkles, 
-  Send, 
-  Clock, 
-  ArrowRight, 
-  X 
+import {
+  Phone,
+  Mail,
+  MapPin,
+  Calendar,
+  CheckCircle2,
+  ChevronDown,
+  Sparkles,
+  Send,
+  Clock,
+  ArrowRight,
+  X
 } from 'lucide-react';
 
 const InstagramIcon: React.FC<{ size?: number; style?: React.CSSProperties }> = ({ size = 14, style }) => (
-  <svg 
-    width={size} 
-    height={size} 
-    viewBox="0 0 24 24" 
-    fill="none" 
-    stroke="currentColor" 
-    strokeWidth="2" 
-    strokeLinecap="round" 
-    strokeLinejoin="round" 
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
     style={style}
   >
     <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
@@ -70,26 +70,26 @@ export const ContactPage: React.FC = () => {
 
   const faqs = [
     {
-      q: 'How long does a custom bridal or couture order take?',
-      a: 'Custom bridal lehengas and hand-embroidered couture garments typically require 6 to 12 weeks of meticulous craftsmanship by our master artisans in Mumbai.'
+      q: 'How long does a custom order take?',
+      a: 'Custom tailoring and hand-embroidered couture garments typically require 6 to 12 weeks of meticulous craftsmanship by our master artisans in Mumbai.'
     },
     {
       q: 'What is TAZAARI’s global shipping policy?',
-      a: 'We offer complimentary express courier shipping on all international orders over $250. Express delivery takes 3 to 7 business days via DHL Express.'
+      a: 'We offer complimentary express shipping on all domestic orders over ₹2,500. Express delivery takes 2 to 5 business days.'
     },
     {
-      q: 'Can I request complimentary size adjustments?',
-      a: 'Yes! Every TAZAARI purchase includes one complimentary fitting alteration at any of our flagship boutiques or via our white-glove mail-in service.'
+      q: 'Can I request size adjustments?',
+      a: 'Yes! Every TAZAARI purchase includes size alteration assistance via our digital styling desk or mail-in support.'
     },
     {
       q: 'What is your return and exchange policy?',
-      a: 'We accept global returns and exchanges within 14 days of delivery for all standard-sized items in original unworn condition with security tags attached.'
+      a: 'We accept returns and exchanges within 14 days of delivery for all standard-sized items in original unworn condition with tags attached.'
     }
   ];
 
   return (
     <div style={{ backgroundColor: '#FAF8F5', color: '#111111', fontFamily: '"Plus Jakarta Sans", sans-serif', minHeight: '100vh' }}>
-      
+
       {/* Minimal Line Input & Un-boxed Styles */}
       <style>{`
         .tz-line-input {
@@ -107,7 +107,7 @@ export const ContactPage: React.FC = () => {
         }
 
         .tz-line-input:focus {
-          border-bottom-color: #111111;
+          border-bottom-color: #C5A059;
         }
 
         .tz-line-input::placeholder {
@@ -137,13 +137,102 @@ export const ContactPage: React.FC = () => {
           background: #D4AF37;
           color: #111111;
         }
+
+        /* Concierge Bar Container */
+        .tz-concierge-card {
+          background: rgba(255, 255, 255, 0.85);
+          backdrop-filter: blur(24px);
+          -webkit-backdrop-filter: blur(24px);
+          border-radius: 0px;
+          border: 1px solid rgba(255, 255, 255, 0.9);
+          box-shadow: 0 20px 50px rgba(0, 0, 0, 0.06), 0 2px 10px rgba(0,0,0,0.03);
+          padding: 32px 40px;
+          transition: all 0.35s ease;
+        }
+
+        .tz-concierge-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 32px;
+          align-items: center;
+        }
+
+        /* Responsive Grid Helpers */
+        .tz-grid-12 {
+          display: grid;
+          grid-template-columns: repeat(12, 1fr);
+          gap: 60px;
+        }
+
+        .tz-form-row {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 32px;
+        }
+
+        .mobile-col-5 {
+          grid-column: span 5;
+        }
+
+        .mobile-col-7 {
+          grid-column: span 7;
+        }
+
+        /* Tablet Breakpoints (max-width: 1024px) */
+        @media (max-width: 1024px) {
+          .tz-concierge-grid {
+            grid-template-columns: 1fr !important;
+            gap: 24px !important;
+          }
+
+          .tz-concierge-card {
+            padding: 24px 20px !important;
+          }
+
+          .tz-grid-12 {
+            grid-template-columns: 1fr !important;
+            gap: 40px !important;
+          }
+
+          .mobile-col-5, .mobile-col-7 {
+            grid-column: span 12 !important;
+          }
+        }
+
+        /* Mobile Breakpoints (max-width: 640px) */
+        @media (max-width: 640px) {
+          .tz-form-row {
+            grid-template-columns: 1fr !important;
+            gap: 20px !important;
+          }
+
+          .tz-minimal-btn {
+            width: 100% !important;
+          }
+
+          .tz-concierge-section {
+            margin-top: -35px !important;
+            padding: 0 16px !important;
+            margin-bottom: 40px !important;
+          }
+
+          .tz-main-section {
+            padding: 0 16px 60px !important;
+          }
+
+          .tz-modal-content {
+            padding: 24px 20px !important;
+            max-height: 90vh !important;
+            overflow-y: auto !important;
+          }
+        }
       `}</style>
 
-      {/* Editorial Vogue-Style Hero Header */}
+      {/* Editorial Hero Header */}
       <section style={{
         position: 'relative',
         width: '100%',
-        minHeight: '60vh',
+        minHeight: '55vh',
         backgroundImage: 'linear-gradient(180deg, rgba(17, 17, 17, 0.45) 0%, rgba(10, 10, 10, 0.78) 100%), url("/images/pexels-pavel-danilyuk-5789582.jpg")',
         backgroundSize: 'cover',
         backgroundPosition: 'center 30%',
@@ -156,7 +245,7 @@ export const ContactPage: React.FC = () => {
         color: '#FFFFFF'
       }}>
         <div style={{ maxWidth: '840px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
-          
+
           {/* Maison Badge */}
           <div style={{
             display: 'inline-flex',
@@ -177,7 +266,7 @@ export const ContactPage: React.FC = () => {
 
           <h1 style={{
             fontFamily: "var(--font-serif, 'Playfair Display', serif)",
-            fontSize: 'clamp(2.6rem, 5.2vw, 4.5rem)',
+            fontSize: 'clamp(2.4rem, 5vw, 4.2rem)',
             fontWeight: 500,
             lineHeight: 1.12,
             letterSpacing: '-0.02em',
@@ -188,37 +277,23 @@ export const ContactPage: React.FC = () => {
           </h1>
 
           <p style={{
-            fontSize: 'clamp(1rem, 1.6vw, 1.15rem)',
+            fontSize: 'clamp(0.95rem, 1.5vw, 1.15rem)',
             color: 'rgba(255, 255, 255, 0.9)',
             lineHeight: 1.7,
             fontWeight: 400,
             maxWidth: '680px',
             margin: '0 auto'
           }}>
-            Whether you desire a private 1-on-1 styling consultation, bridal couture customization, or bespoke order assistance, our senior advisors are ready to assist.
+            Whether you desire a private 1-on-1 styling consultation, couture customization, or bespoke order assistance, our advisors are ready to assist.
           </p>
         </div>
       </section>
 
       {/* Combined Single Glassmorphism Concierge Bar */}
-      <section style={{ padding: '0 24px', marginTop: '-55px', position: 'relative', zIndex: 10, maxWidth: '1200px', margin: '-55px auto 60px' }}>
-        <div style={{
-          background: 'rgba(255, 255, 255, 0.75)',
-          backdropFilter: 'blur(24px)',
-          WebkitBackdropFilter: 'blur(24px)',
-          borderRadius: '0px',
-          border: '1px solid rgba(255, 255, 255, 0.9)',
-          boxShadow: '0 20px 50px rgba(0, 0, 0, 0.06), 0 2px 10px rgba(0,0,0,0.03)',
-          padding: '28px 36px',
-          transition: 'all 0.35s ease'
-        }}>
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
-            gap: '32px',
-            alignItems: 'center'
-          }}>
-            
+      <section className="tz-concierge-section" style={{ padding: '0 24px', marginTop: '-55px', position: 'relative', zIndex: 10, maxWidth: '1200px', margin: '-55px auto 60px' }}>
+        <div className="tz-concierge-card">
+          <div className="tz-concierge-grid">
+
             {/* Channel 1: Phone / WhatsApp */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '18px' }}>
               <div style={{ width: '48px', height: '48px', borderRadius: '0px', background: 'rgba(212, 175, 55, 0.14)', border: '1px solid rgba(212, 175, 55, 0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
@@ -235,8 +310,8 @@ export const ContactPage: React.FC = () => {
 
             {/* Channel 2: Digital Email */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '18px' }}>
-              <div style={{ width: '48px', height: '48px', borderRadius: '0px', background: 'rgba(92, 129, 179, 0.14)', border: '1px solid rgba(92, 129, 179, 0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                <Mail size={22} style={{ color: '#5c81b3' }} />
+              <div style={{ width: '48px', height: '48px', borderRadius: '0px', background: 'rgba(212, 175, 55, 0.14)', border: '1px solid rgba(212, 175, 55, 0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <Mail size={22} style={{ color: '#D4AF37' }} />
               </div>
               <div>
                 <span style={{ fontSize: '0.75rem', fontWeight: 800, letterSpacing: '0.15em', textTransform: 'uppercase', color: '#777777', display: 'block' }}>EMAIL SUPPORT</span>
@@ -270,14 +345,14 @@ export const ContactPage: React.FC = () => {
       </section>
 
       {/* Main Form & Atelier Information Section (No Card Boxes) */}
-      <section style={{ padding: '0 24px 100px', maxWidth: '1200px', margin: '0 auto' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(12, 1fr)', gap: '60px' }}>
-          
+      <section className="tz-main-section" style={{ padding: '0 24px 100px', maxWidth: '1200px', margin: '0 auto' }}>
+        <div className="tz-grid-12">
+
           {/* Left Column: Line-Input Transmission Form (7 Cols) */}
-          <div style={{ gridColumn: 'span 7' }} className="mobile-col-12">
-            
+          <div className="mobile-col-7">
+
             <div style={{ marginBottom: '40px' }}>
-              <span style={{ fontSize: '0.75rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#5c81b3', fontWeight: 800, display: 'block', marginBottom: '8px' }}>
+              <span style={{ fontSize: '0.75rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#D4AF37', fontWeight: 800, display: 'block', marginBottom: '8px' }}>
                 DIRECT ADVISORY MESSAGE
               </span>
               <h2 style={{ fontFamily: "var(--font-serif, 'Playfair Display', serif)", fontSize: '2.4rem', fontWeight: 400, color: '#111111', margin: 0 }}>
@@ -306,9 +381,9 @@ export const ContactPage: React.FC = () => {
               </div>
             ) : (
               <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
-                
+
                 {/* Name & Email Row */}
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px' }}>
+                <div className="tz-form-row">
                   <div>
                     <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 500, color: '#333333', marginBottom: '4px' }}>
                       Enter your name *
@@ -339,7 +414,7 @@ export const ContactPage: React.FC = () => {
                 </div>
 
                 {/* Phone & Inquiry Type Row */}
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px' }}>
+                <div className="tz-form-row">
                   <div>
                     <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 500, color: '#333333', marginBottom: '4px' }}>
                       Phone number
@@ -355,31 +430,31 @@ export const ContactPage: React.FC = () => {
 
                   <div>
                     <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 500, color: '#333333', marginBottom: '4px' }}>
-                      Select your inquiry type
+                      Inquiry type
                     </label>
                     <select
                       value={formData.inquiryType}
                       onChange={(e) => setFormData({ ...formData, inquiryType: e.target.value })}
                       className="tz-line-input"
-                      style={{ cursor: 'pointer', backgroundColor: 'transparent' }}
+                      style={{ cursor: 'pointer' }}
                     >
-                      <option value="general">General Advisory & Orders</option>
-                      <option value="bridal">Bespoke Bridal / Couture Order</option>
-                      <option value="styling">Private VIP Styling Appointment</option>
-                      <option value="press">Press & PR Relations</option>
+                      <option value="general">General Support</option>
+                      <option value="custom">Custom Tailoring Curation</option>
+                      <option value="order">Order Tracking & Delivery</option>
+                      <option value="vip">Styling & Private Session</option>
                     </select>
                   </div>
                 </div>
 
-                {/* Message Details */}
+                {/* Message Field */}
                 <div>
                   <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 500, color: '#333333', marginBottom: '4px' }}>
-                    Project description / Message details *
+                    Your message *
                   </label>
                   <textarea
-                    rows={4}
                     required
-                    placeholder="Tell us about your requirements, sizing preferences, or event dates..."
+                    rows={4}
+                    placeholder="Describe your styling request or catalog inquiry in detail..."
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                     className="tz-line-input"
@@ -399,99 +474,13 @@ export const ContactPage: React.FC = () => {
 
           </div>
 
-          {/* Right Column: Atelier Locations & VIP Session (5 Cols - Unboxed) */}
-          <div style={{ gridColumn: 'span 5', display: 'flex', flexDirection: 'column', gap: '40px' }} className="mobile-col-12">
-            
-            {/* VIP Styling CTA */}
-            <div style={{ paddingBottom: '32px', borderBottom: '1px solid rgba(17, 17, 17, 0.12)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-                <Sparkles size={18} style={{ color: '#D4AF37' }} />
-                <span style={{ fontSize: '0.75rem', fontWeight: 800, letterSpacing: '0.2em', textTransform: 'uppercase', color: '#D4AF37' }}>
-                  PRIVATE STYLING SALON
-                </span>
-              </div>
-
-              <h3 style={{ fontFamily: "var(--font-serif, 'Playfair Display', serif)", fontSize: '1.8rem', fontWeight: 400, color: '#111111', margin: '0 0 12px' }}>
-                1-on-1 Wardrobe Consultation
-              </h3>
-
-              <p style={{ fontSize: '0.9rem', color: '#666666', lineHeight: 1.6, margin: '0 0 24px' }}>
-                Experience one-on-one private couture curation with senior Tazaari stylists in our flagship salons or via 4K Video Stream.
-              </p>
-
-              <button
-                onClick={() => setIsBookingModalOpen(true)}
-                className="tz-minimal-btn"
-                style={{ width: '100%' }}
-              >
-                <Calendar size={16} />
-                <span>RESERVE VIP SESSION</span>
-              </button>
-            </div>
-
-            {/* Atelier Locations */}
-            <div>
-              <h3 style={{ fontFamily: "var(--font-serif, 'Playfair Display', serif)", fontSize: '1.6rem', fontWeight: 400, color: '#111111', marginBottom: '24px' }}>
-                Flagship Atelier Locations
-              </h3>
-
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                
-                {/* Mumbai Salon */}
-                <div style={{ display: 'flex', gap: '14px', borderBottom: '1px solid rgba(17, 17, 17, 0.08)', paddingBottom: '18px' }}>
-                  <MapPin size={20} style={{ color: '#D4AF37', flexShrink: 0, marginTop: '2px' }} />
-                  <div>
-                    <h4 style={{ fontSize: '0.95rem', fontWeight: 800, color: '#111111', margin: '0 0 4px' }}>
-                      Mumbai Flagship Atelier
-                    </h4>
-                    <p style={{ fontSize: '0.825rem', color: '#666666', lineHeight: 1.5, margin: 0 }}>
-                      Palladium Mall, Level 3, Lower Parel, Mumbai, Maharashtra 400013
-                    </p>
-                  </div>
-                </div>
-
-                {/* New Delhi Boutique */}
-                <div style={{ display: 'flex', gap: '14px', borderBottom: '1px solid rgba(17, 17, 17, 0.08)', paddingBottom: '18px' }}>
-                  <MapPin size={20} style={{ color: '#5c81b3', flexShrink: 0, marginTop: '2px' }} />
-                  <div>
-                    <h4 style={{ fontSize: '0.95rem', fontWeight: 800, color: '#111111', margin: '0 0 4px' }}>
-                      New Delhi Luxury Salon
-                    </h4>
-                    <p style={{ fontSize: '0.825rem', color: '#666666', lineHeight: 1.5, margin: 0 }}>
-                      Kalka Das Marg, Mehrauli Luxury District, New Delhi 110030
-                    </p>
-                  </div>
-                </div>
-
-                {/* Social & Hours */}
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '8px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <Clock size={16} style={{ color: '#888888' }} />
-                    <span style={{ fontSize: '0.8rem', color: '#666666', fontWeight: 600 }}>10 AM - 8 PM IST</span>
-                  </div>
-                  <a
-                    href="https://www.instagram.com/tazaariofficial/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{ fontSize: '0.8rem', fontWeight: 800, color: '#5c81b3', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '6px' }}
-                  >
-                    <InstagramIcon size={14} />
-                    <span>@tazaariofficial</span>
-                  </a>
-                </div>
-
-              </div>
-            </div>
-
-          </div>
-
         </div>
       </section>
 
       {/* Frequently Asked Questions */}
       <section style={{ padding: '60px 24px 100px', maxWidth: '920px', margin: '0 auto' }}>
         <div style={{ textAlign: 'center', marginBottom: '48px' }}>
-          <span style={{ fontSize: '0.75rem', letterSpacing: '0.25em', textTransform: 'uppercase', color: '#5c81b3', fontWeight: 800, display: 'block', marginBottom: '10px' }}>
+          <span style={{ fontSize: '0.75rem', letterSpacing: '0.25em', textTransform: 'uppercase', color: '#D4AF37', fontWeight: 800, display: 'block', marginBottom: '10px' }}>
             CLIENT INQUIRIES & POLICIES
           </span>
           <h2 style={{ fontFamily: "var(--font-serif, 'Playfair Display', serif)", fontSize: '2.4rem', fontWeight: 400, color: '#111111', margin: 0 }}>
@@ -543,20 +532,20 @@ export const ContactPage: React.FC = () => {
       {/* Private Styling Reservation Modal */}
       {isBookingModalOpen && (
         <div style={{ position: 'fixed', inset: 0, zIndex: 1050, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
-          <div 
-            style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(8px)' }} 
-            onClick={() => setIsBookingModalOpen(false)} 
+          <div
+            style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(8px)' }}
+            onClick={() => setIsBookingModalOpen(false)}
           />
 
-          <div 
-            className="animate-fade-in" 
-            style={{ 
-              position: 'relative', 
-              backgroundColor: '#FFFFFF', 
-              width: '100%', 
-              maxWidth: '540px', 
-              borderRadius: '0px', 
-              padding: '40px 36px', 
+          <div
+            className="tz-modal-content animate-fade-in"
+            style={{
+              position: 'relative',
+              backgroundColor: '#FFFFFF',
+              width: '100%',
+              maxWidth: '540px',
+              borderRadius: '0px',
+              padding: '40px 36px',
               zIndex: 1051,
               boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
             }}
@@ -568,8 +557,8 @@ export const ContactPage: React.FC = () => {
                   Book Styling Session
                 </h3>
               </div>
-              <button 
-                onClick={() => setIsBookingModalOpen(false)} 
+              <button
+                onClick={() => setIsBookingModalOpen(false)}
                 style={{ width: '36px', height: '36px', borderRadius: '0px', border: '1px solid rgba(17,17,17,0.1)', background: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
               >
                 <X size={18} />
@@ -599,7 +588,7 @@ export const ContactPage: React.FC = () => {
                   <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 500, color: '#333', marginBottom: '4px' }}>Email Address *</label>
                   <input type="email" required value={bookingData.email} onChange={(e) => setBookingData({ ...bookingData, email: e.target.value })} className="tz-line-input" placeholder="victoria@example.com" />
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+                <div className="tz-form-row" style={{ gap: '20px' }}>
                   <div>
                     <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 500, color: '#333', marginBottom: '4px' }}>Preferred Date *</label>
                     <input type="date" required value={bookingData.date} onChange={(e) => setBookingData({ ...bookingData, date: e.target.value })} className="tz-line-input" />
@@ -624,3 +613,5 @@ export const ContactPage: React.FC = () => {
     </div>
   );
 };
+
+export default ContactPage;

@@ -132,35 +132,35 @@ export const Navbar: React.FC = () => {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-[1000] transition-all duration-[350ms] ease-[cubic-bezier(0.25,0.8,0.25,1)] mb-0">
+    <header className="tazaari-header">
       {/* Top running marquee announcement bar */}
-      <div className="bg-[#121214] text-white text-[0.65rem] py-[6px] h-[28px] flex items-center border-b border-white/8 tracking-[0.12em] overflow-hidden whitespace-nowrap">
-        <div className="w-full overflow-hidden" style={{ padding: 0 }}>
-          <div className="inline-flex animate-[marquee_25s_linear_infinite]" style={{ gap: '0px' }}>
-            <div className="inline-flex items-center gap-[48px] pr-[48px] font-semibold">
-              <span className="inline-flex items-center gap-[6px]">
-                <Sparkles size={11} className="text-[var(--color-gold)]" />
+      <div className="tazaari-announcement-bar">
+        <div className="tazaari-announcement-container">
+          <div className="tazaari-marquee">
+            <div className="tazaari-marquee-group">
+              <span className="tazaari-marquee-item">
+                <Sparkles size={11} style={{ color: 'var(--color-gold)' }} />
                 COMPLIMENTARY EXPRESS WORLDWIDE SHIPPING OVER ₹2,500
               </span>
               <span>•</span>
-              <span>USE CODE: <strong className="text-[var(--color-gold)]">TAZAARI15</strong> FOR 15% OFF YOUR FIRST ORDER</span>
+              <span>USE CODE: <strong style={{ color: 'var(--color-gold)' }}>TAZAARI15</strong> FOR 15% OFF YOUR FIRST ORDER</span>
               <span>•</span>
-              <span className="inline-flex items-center gap-[6px]">
-                <Sparkles size={11} className="text-[var(--color-gold)]" />
+              <span className="tazaari-marquee-item">
+                <Sparkles size={11} style={{ color: 'var(--color-gold)' }} />
                 HANDCRAFTED ARTISANAL LUXURY & ETHICAL COUTURE
               </span>
               <span>•</span>
             </div>
-            <div className="inline-flex items-center gap-[48px] pr-[48px] font-semibold">
-              <span className="inline-flex items-center gap-[6px]">
-                <Sparkles size={11} className="text-[var(--color-gold)]" />
+            <div className="tazaari-marquee-group">
+              <span className="tazaari-marquee-item">
+                <Sparkles size={11} style={{ color: 'var(--color-gold)' }} />
                 COMPLIMENTARY EXPRESS WORLDWIDE SHIPPING OVER ₹2,500
               </span>
               <span>•</span>
-              <span>USE CODE: <strong className="text-[var(--color-gold)]">TAZAARI15</strong> FOR 15% OFF YOUR FIRST ORDER</span>
+              <span>USE CODE: <strong style={{ color: 'var(--color-gold)' }}>TAZAARI15</strong> FOR 15% OFF YOUR FIRST ORDER</span>
               <span>•</span>
-              <span className="inline-flex items-center gap-[6px]">
-                <Sparkles size={11} className="text-[var(--color-gold)]" />
+              <span className="tazaari-marquee-item">
+                <Sparkles size={11} style={{ color: 'var(--color-gold)' }} />
                 HANDCRAFTED ARTISANAL LUXURY & ETHICAL COUTURE
               </span>
               <span>•</span>
@@ -171,81 +171,163 @@ export const Navbar: React.FC = () => {
 
       {/* Main Luxury Navigation Bar */}
       <nav
-        className="backdrop-blur-[12px] transition-all duration-[400ms] ease-[cubic-bezier(0.25,0.8,0.25,1)]"
+        className="tazaari-nav-wrapper"
         style={{
-          backgroundColor: (activePage === 'home' && !isScrolled) ? 'rgba(18, 18, 20, 0.2)' : 'rgba(92, 129, 179, 0.95)',
-          borderBottom: isScrolled ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid transparent',
-          boxShadow: isScrolled ? '0 10px 30px rgba(0, 0, 0, 0.08)' : 'none',
+          backgroundColor: (activePage === 'home' && !isScrolled) ? 'rgba(18, 18, 20, 0.35)' : 'rgba(18, 18, 20, 0.95)',
+          WebkitBackdropFilter: 'blur(16px)',
+          borderBottom: isScrolled ? '1px solid rgba(255, 255, 255, 0.12)' : '1px solid rgba(255, 255, 255, 0.05)',
+          boxShadow: isScrolled ? '0 10px 30px rgba(0, 0, 0, 0.25)' : 'none',
           padding: isScrolled ? '12px 0' : '18px 0',
         }}
       >
-        <div className="container flex items-center justify-between gap-5">
+        <div className="tazaari-nav-container">
           {/* LEFT: Navigation Links (Desktop) */}
-          <div className="hidden min-[869px]:flex items-center gap-8">
+          <div className="tazaari-nav-left">
             {/* Direct Home Link */}
             <button
               onClick={() => handleNavClick('home')}
-              className={`
-                font-[family:var(--font-sans)] text-[0.85rem] font-bold tracking-[0.15em] uppercase text-white bg-transparent border-0 cursor-pointer pb-1 transition-all duration-250 ease-in-out
-                ${activePage === 'home' ? 'opacity-100 border-b-2 border-white' : 'opacity-80 border-b-2 border-transparent hover:opacity-100'}
-              `}
+              className={`tazaari-nav-link ${activePage === 'home' ? 'active' : ''}`}
             >
               Home
             </button>
 
             {/* Shop (Mega Dropdown Trigger) */}
             <div
-              className="relative"
+              className="tazaari-dropdown-trigger"
               onMouseEnter={() => setIsShopDropdownOpen(true)}
               onMouseLeave={() => setIsShopDropdownOpen(false)}
             >
               <button
                 onClick={() => handleCategorySelect('all')}
-                className={`
-                  flex items-center gap-1 font-[family:var(--font-sans)] text-[0.85rem] font-bold tracking-[0.15em] uppercase text-white bg-transparent border-0 cursor-pointer pb-1 transition-all duration-250 ease-in-out
-                  ${activePage === 'shop' ? 'opacity-100 border-b-2 border-white' : 'opacity-80 border-b-2 border-transparent hover:opacity-100'}
-                `}
+                className={`tazaari-nav-link ${activePage === 'shop' ? 'active' : ''}`}
+                style={{ display: 'flex', alignItems: 'center', gap: '4px' }}
               >
                 <span>Shop</span>
-                <ChevronDown size={14} className={`transition-transform duration-300 ${isShopDropdownOpen ? 'rotate-180' : ''}`} />
+                <ChevronDown size={14} style={{ transition: 'transform 0.3s ease', transform: isShopDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)' }} />
               </button>
 
               {/* Shop Mega Dropdown Card */}
               {isShopDropdownOpen && (
-                <div className="absolute top-full left-[-40px] w-[680px] bg-white shadow-[0_20px_50px_rgba(0,0,0,0.15)] border border-black/5 rounded-none p-9 grid grid-cols-3 gap-7 z-50 animate-[dropdownFadeIn_0.3s_cubic-bezier(0.16,1,0.3,1)] text-[var(--color-primary)]">
-                  {NAVIGATION_CATEGORIES.map(cat => (
-                    <div key={cat.slug} className="flex flex-col gap-3.5">
-                      <button
-                        onClick={() => handleCategorySelect(cat.slug)}
-                        className="font-[family:var(--font-sans)] text-[0.8rem] font-extrabold tracking-[0.12em] text-[#111111] text-left border-0 bg-transparent cursor-pointer border-b border-[var(--color-border)] pb-1.5 uppercase"
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: 'calc(100% + 12px)',
+                    left: '-80px',
+                    width: '920px',
+                    backgroundColor: '#FFFFFF',
+                    borderRadius: '12px',
+                    border: '1px solid rgba(18, 18, 20, 0.08)',
+                    boxShadow: '0 24px 60px rgba(0, 0, 0, 0.22)',
+                    padding: '32px 36px 24px',
+                    zIndex: 1000,
+                    animation: 'dropdownFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                  }}
+                >
+                  {/* 5 Category Columns + Featured Promo Grid (6 columns total) */}
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: '20px' }}>
+                    {NAVIGATION_CATEGORIES.map((cat) => (
+                      <div key={cat.slug} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                        {/* Category Title Header with Gold Accent Underline */}
+                        <button
+                          onClick={() => handleCategorySelect(cat.slug)}
+                          className="mega-title-btn"
+                        >
+                          {cat.title}
+                        </button>
+
+                        {/* Sub-items List */}
+                        <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '8px', padding: 0, margin: 0 }}>
+                          {cat.items.map((item) => (
+                            <li key={item}>
+                              <button
+                                onClick={() => handleCategorySelect(cat.slug)}
+                                className="mega-sub-btn"
+                              >
+                                {item}
+                              </button>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
+
+                    {/* Column 6: Featured Image Banner */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', gridColumn: 'span 1' }}>
+                      <div style={{
+                        position: 'relative',
+                        height: '100%',
+                        minHeight: '150px',
+                        borderRadius: '8px',
+                        overflow: 'hidden',
+                        cursor: 'pointer'
+                      }}
+                      onClick={() => handleCategorySelect('all')}
                       >
-                        {cat.title}
-                      </button>
-                      <ul className="list-none flex flex-col gap-2 p-0 m-0">
-                        {cat.items.map(item => (
-                          <li key={item}>
-                            <button
-                              onClick={() => handleCategorySelect(cat.slug)}
-                              className="border-0 bg-transparent p-0 text-[0.85rem] font-medium text-[var(--color-text-muted)] cursor-pointer transition-all duration-200 ease-in-out text-left hover:text-[var(--color-gold)] hover:translate-x-1"
-                            >
-                              {item}
-                            </button>
-                          </li>
-                        ))}
-                      </ul>
+                        <img 
+                          src="/images/23.avif" 
+                          alt="Luxury Streetwear Collection"
+                          className="mega-promo-img"
+                        />
+                        <div style={{
+                          position: 'absolute',
+                          inset: 0,
+                          background: 'linear-gradient(to top, rgba(18, 18, 20, 0.8) 0%, rgba(18, 18, 20, 0.2) 60%, transparent 100%)',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          justifyContent: 'flex-end',
+                          padding: '12px',
+                          color: '#FFFFFF'
+                        }}>
+                          <span style={{ fontSize: '0.55rem', fontWeight: 800, letterSpacing: '0.2em', color: '#D4AF37', textTransform: 'uppercase', marginBottom: '2px' }}>
+                            SEASON ESSENTIALS
+                          </span>
+                          <span style={{ fontSize: '0.8rem', fontFamily: 'var(--font-serif)', fontWeight: 600, letterSpacing: '0.05em' }}>
+                            STREETWEAR '26
+                          </span>
+                        </div>
+                      </div>
                     </div>
-                  ))}
-                  
-                  {/* Decorative Brand promo in Mega Dropdown */}
-                  <div className="col-span-3 mt-3 p-4 bg-[#FAF8F5] flex items-center justify-between">
-                    <span className="text-[0.75rem] font-bold tracking-[0.08em] text-[#111111]">
-                      NEW SEASON COUTURE DISCOVERIES
-                    </span>
-                    <button 
+                  </div>
+
+                  {/* Luxury Dark Bottom Banner Bar */}
+                  <div
+                    style={{
+                      marginTop: '28px',
+                      padding: '14px 20px',
+                      backgroundColor: '#121214',
+                      borderRadius: '8px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <Sparkles size={14} style={{ color: '#D4AF37' }} />
+                      <span style={{ fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.12em', color: '#FFFFFF', textTransform: 'uppercase' }}>
+                        TAZAARI ARTISANAL COUTURE DISCOVERIES
+                      </span>
+                    </div>
+
+                    <button
                       onClick={() => handleCategorySelect('new-arrivals')}
-                      className="border-0 bg-transparent text-[var(--color-gold)] text-[0.75rem] font-extrabold tracking-[0.05em] cursor-pointer underline"
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        color: '#D4AF37',
+                        fontSize: '0.75rem',
+                        fontWeight: 800,
+                        letterSpacing: '0.1em',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                        textTransform: 'uppercase',
+                      }}
+                      onMouseEnter={(e) => (e.currentTarget.style.textDecoration = 'underline')}
+                      onMouseLeave={(e) => (e.currentTarget.style.textDecoration = 'none')}
                     >
-                      EXPLORE ALL
+                      <span>EXPLORE ALL</span>
+                      <span>→</span>
                     </button>
                   </div>
                 </div>
@@ -255,10 +337,7 @@ export const Navbar: React.FC = () => {
             {/* Direct About Us Link (No Dropdown) */}
             <button
               onClick={() => handleNavClick('about')}
-              className={`
-                font-[family:var(--font-sans)] text-[0.85rem] font-bold tracking-[0.15em] uppercase text-white bg-transparent border-0 cursor-pointer pb-1 transition-all duration-250 ease-in-out
-                ${activePage === 'about' ? 'opacity-100 border-b-2 border-white' : 'opacity-80 border-b-2 border-transparent hover:opacity-100'}
-              `}
+              className={`tazaari-nav-link ${activePage === 'about' ? 'active' : ''}`}
             >
               About Us
             </button>
@@ -266,20 +345,17 @@ export const Navbar: React.FC = () => {
             {/* Direct Contact Us Link (No Dropdown) */}
             <button
               onClick={() => handleNavClick('contact')}
-              className={`
-                font-[family:var(--font-sans)] text-[0.85rem] font-bold tracking-[0.15em] uppercase text-white bg-transparent border-0 cursor-pointer pb-1 transition-all duration-250 ease-in-out
-                ${activePage === 'contact' ? 'opacity-100 border-b-2 border-white' : 'opacity-80 border-b-2 border-transparent hover:opacity-100'}
-              `}
+              className={`tazaari-nav-link ${activePage === 'contact' ? 'active' : ''}`}
             >
               Contact Us
             </button>
           </div>
 
-          {/* Mobile Menu Icon */}
-          <div className="min-[869px]:hidden">
+          {/* Mobile Menu Icon Toggle */}
+          <div className="tazaari-mobile-toggle">
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="bg-transparent border-0 p-1.5 text-white cursor-pointer flex items-center"
+              style={{ background: 'transparent', border: 0, padding: '6px', color: '#ffffff', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
               aria-label="Toggle Menu"
             >
               {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -287,10 +363,10 @@ export const Navbar: React.FC = () => {
           </div>
 
           {/* CENTER: Logo */}
-          <div className="flex justify-center items-center">
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
             <button
               onClick={() => handleNavClick('home')}
-              className="bg-transparent border-0 p-0 cursor-pointer flex items-center"
+              style={{ background: 'transparent', border: 0, padding: 0, cursor: 'pointer', display: 'flex', alignItems: 'center' }}
               title="TAZAARI Home"
             >
               <img
@@ -308,16 +384,15 @@ export const Navbar: React.FC = () => {
           </div>
 
           {/* RIGHT: Actions */}
-          <div className="flex items-center gap-5">
+          <div className="tazaari-nav-right">
             {/* Search Toggle */}
-            <div className="relative">
+            <div style={{ position: 'relative' }}>
               {isSearchOpen ? (
                 <form 
                   onSubmit={handleSearchSubmit}
-                  className="flex items-center gap-2.5 bg-white rounded-full border border-black/5 shadow-[0_8px_30px_rgba(0,0,0,0.08)] animate-[searchExpand_0.25s_cubic-bezier(0.16,1,0.3,1)] absolute right-0 top-1/2 -translate-y-1/2 z-10 w-[200px] sm:w-[320px]"
-                  style={{ padding: '8px 18px' }}
+                  className="tazaari-search-form"
                 >
-                  <Search size={14} className="text-[#121214] shrink-0" />
+                  <Search size={14} style={{ color: '#121214', flexShrink: 0 }} />
                   <input
                     type="text"
                     placeholder="Search our collections..."
@@ -329,8 +404,7 @@ export const Navbar: React.FC = () => {
                         setActivePage('shop');
                       }
                     }}
-                    className="border-0 outline-none text-[0.8rem] w-full text-[#121214] font-[family:var(--font-sans)] bg-transparent placeholder-gray-400"
-                    style={{ paddingLeft: '8px', paddingRight: '8px' }}
+                    className="tazaari-search-input"
                     autoFocus
                   />
                   <button 
@@ -339,7 +413,7 @@ export const Navbar: React.FC = () => {
                       setSearchQuery('');
                       setIsSearchOpen(false);
                     }} 
-                    className="border-0 bg-transparent text-gray-400 hover:text-[#121214] text-[0.75rem] cursor-pointer flex items-center justify-center p-0.5"
+                    className="tazaari-search-close"
                     aria-label="Close search"
                   >
                     <X size={14} />
@@ -348,7 +422,7 @@ export const Navbar: React.FC = () => {
               ) : (
                 <button
                   onClick={() => setIsSearchOpen(true)}
-                  className="bg-transparent border-0 text-white p-1.5 cursor-pointer"
+                  className="tazaari-action-btn"
                   title="Search"
                 >
                   <Search size={20} />
@@ -356,7 +430,7 @@ export const Navbar: React.FC = () => {
               )}
             </div>
 
-            {/* Account Account Login (Hidden on Mobile, shown in mobile drawer) */}
+            {/* Account Account Login (Hidden on Mobile) */}
             <button
               onClick={() => {
                 if (isAuthenticated) {
@@ -367,21 +441,21 @@ export const Navbar: React.FC = () => {
                   setIsUserModalOpen(true);
                 }
               }}
-              className="hidden md:inline-flex bg-transparent border-0 text-white p-1.5 cursor-pointer"
+              className="tazaari-action-btn tazaari-desktop-action"
               title="Account"
             >
               <User size={20} color="#FFFFFF" />
             </button>
 
-            {/* Wishlist Link (Hidden on Mobile, shown in mobile drawer) */}
+            {/* Wishlist Link (Hidden on Mobile) */}
             <button
               onClick={() => handleCategorySelect('all')}
-              className="hidden md:inline-flex relative bg-transparent border-0 text-white p-1.5 cursor-pointer"
+              className="tazaari-action-btn tazaari-desktop-action"
               title="Wishlist"
             >
               <Heart size={20} />
               {wishlist.length > 0 && (
-                <span className="absolute top-0 right-0 bg-[var(--color-gold)] text-[#121214] text-[0.6rem] font-black w-[15px] h-[15px] rounded-full flex items-center justify-center shadow-[0_2px_4px_rgba(0,0,0,0.1)]">
+                <span className="tazaari-badge tazaari-badge-gold">
                   {wishlist.length}
                 </span>
               )}
@@ -390,11 +464,11 @@ export const Navbar: React.FC = () => {
             {/* Cart Drawer Toggle */}
             <button
               onClick={() => setIsCartOpen(true)}
-              className="relative bg-transparent border-0 text-white p-1.5 cursor-pointer"
+              className="tazaari-action-btn"
               title="Bag"
             >
               <ShoppingBag size={20} />
-              <span className="absolute top-0 right-0 bg-white text-[#121214] text-[0.6rem] font-black w-[15px] h-[15px] rounded-full flex items-center justify-center shadow-[0_2px_4px_rgba(0,0,0,0.1)]">
+              <span className="tazaari-badge tazaari-badge-white">
                 {cartCount}
               </span>
             </button>
@@ -402,76 +476,267 @@ export const Navbar: React.FC = () => {
         </div>
       </nav>
 
-      {/* Mobile Drawer Menu */}
+      {/* ── MOBILE DRAWER OVERLAY & MENU ── */}
       {isMobileMenuOpen && (
-        <div className={`fixed left-0 right-0 bg-white border-b border-black/8 shadow-[0_20px_40px_rgba(0,0,0,0.1)] flex flex-col px-5 py-6 gap-4 z-50 animate-[dropdownFadeIn_0.3s_cubic-bezier(0.16,1,0.3,1)] ${isScrolled ? 'top-[84px]' : 'top-[104px]'}`}>
-          <button 
-            onClick={() => handleNavClick('home')} 
-            className="text-left text-[0.9rem] font-extrabold text-[#111111] border-0 bg-transparent tracking-[0.12em] uppercase"
+        <div
+          style={{
+            position: 'absolute',
+            left: 0,
+            right: 0,
+            top: '100%',
+            height: 'calc(100vh - 100%)',
+            maxHeight: 'calc(100vh - 120px)',
+            backgroundColor: 'rgba(18, 18, 20, 0.98)',
+            backdropFilter: 'blur(20px)',
+            WebkitBackdropFilter: 'blur(20px)',
+            borderBottom: '1px solid rgba(212, 175, 55, 0.3)',
+            boxShadow: '0 24px 60px rgba(0, 0, 0, 0.4)',
+            padding: '24px 20px 32px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '20px',
+            zIndex: 999,
+            overflowY: 'auto',
+            animation: 'dropdownFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+            color: '#FFFFFF',
+            fontFamily: 'var(--font-sans)',
+          }}
+        >
+          {/* Mobile Integrated Search Input */}
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              setIsMobileMenuOpen(false);
+              router.push('/shop');
+              setActivePage('shop');
+            }}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              backgroundColor: 'rgba(255, 255, 255, 0.08)',
+              borderRadius: '8px',
+              border: '1px solid rgba(255, 255, 255, 0.15)',
+              padding: '10px 14px',
+              gap: '10px',
+            }}
           >
-            Home
-          </button>
-          
-          {/* Shop Accordion for Mobile */}
-          <div className="flex flex-col gap-2.5">
-            <span className="text-[0.9rem] font-extrabold text-[#111111] tracking-[0.12em] uppercase">
-              Shop Collections
-            </span>
-            <div className="grid grid-cols-2 gap-2 pl-3">
-              {NAVIGATION_CATEGORIES.map(cat => (
-                <button 
-                  key={cat.slug} 
-                  onClick={() => handleCategorySelect(cat.slug)} 
-                  className="text-left text-[0.85rem] text-[var(--color-text-muted)] border-0 bg-transparent py-1 cursor-pointer"
-                >
-                  {cat.title}
-                </button>
-              ))}
-              <button 
-                onClick={() => handleCategorySelect('all')} 
-                className="text-left text-[0.85rem] text-[var(--color-gold)] font-bold border-0 bg-transparent py-1 col-span-2"
-              >
-                View All products
-              </button>
-            </div>
-          </div>
-
-          <button 
-            onClick={() => handleNavClick('about')} 
-            className="text-left text-[0.9rem] font-extrabold text-[#111111] border-0 bg-transparent tracking-[0.12em] uppercase"
-          >
-            About Us
-          </button>
-          <button 
-            onClick={() => handleNavClick('contact')} 
-            className="text-left text-[0.9rem] font-extrabold text-[#111111] border-0 bg-transparent tracking-[0.12em] uppercase"
-          >
-            Contact Us
-          </button>
-
-          {/* Account and Wishlist options for mobile viewports */}
-          <div className="border-t border-gray-100 pt-4 flex flex-col gap-4 md:hidden">
-            <button 
-              onClick={() => { 
-                setIsMobileMenuOpen(false); 
-                if (isAuthenticated) {
-                  router.push('/account');
-                } else {
-                  setModalError('');
-                  setModalSuccess('');
-                  setIsUserModalOpen(true); 
+            <Search size={16} style={{ color: '#D4AF37' }} />
+            <input
+              type="text"
+              placeholder="Search streetwear, tees, apparel..."
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                if (window.location.pathname !== '/shop') {
+                  router.push('/shop');
+                  setActivePage('shop');
                 }
               }}
-              className="text-left text-[0.9rem] font-extrabold text-[#111111] border-0 bg-transparent tracking-[0.12em] uppercase flex items-center gap-2"
+              style={{
+                width: '100%',
+                background: 'none',
+                border: 'none',
+                outline: 'none',
+                color: '#FFFFFF',
+                fontSize: '0.85rem',
+                fontFamily: 'inherit',
+              }}
+            />
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => setSearchQuery('')}
+                style={{ background: 'none', border: 'none', color: '#999', cursor: 'pointer', padding: 0 }}
+              >
+                <X size={14} />
+              </button>
+            )}
+          </form>
+
+          {/* Primary Mobile Navigation Links */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', borderBottom: '1px solid rgba(255, 255, 255, 0.1)', paddingBottom: '16px' }}>
+            <button
+              onClick={() => handleNavClick('home')}
+              style={{
+                textAlign: 'left',
+                fontSize: '1rem',
+                fontWeight: 800,
+                letterSpacing: '0.15em',
+                color: activePage === 'home' ? '#D4AF37' : '#FFFFFF',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                textTransform: 'uppercase',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}
             >
-              <User size={16} /> {isAuthenticated ? 'My Account' : 'Log In'}
+              <span>HOME</span>
+              {activePage === 'home' && <span style={{ color: '#D4AF37', fontSize: '0.8rem' }}>●</span>}
             </button>
-            <button 
-              onClick={() => handleCategorySelect('all')} 
-              className="text-left text-[0.9rem] font-extrabold text-[#111111] border-0 bg-transparent tracking-[0.12em] uppercase flex items-center gap-2"
+
+            {/* Shop Collections Grid Accordion */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '4px' }}>
+              <span style={{ fontSize: '0.725rem', fontWeight: 800, letterSpacing: '0.18em', color: '#D4AF37', textTransform: 'uppercase' }}>
+                SHOP COLLECTIONS
+              </span>
+
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px' }}>
+                {NAVIGATION_CATEGORIES.map((cat) => (
+                  <button
+                    key={cat.slug}
+                    onClick={() => handleCategorySelect(cat.slug)}
+                    style={{
+                      padding: '12px 14px',
+                      backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                      borderRadius: '8px',
+                      color: '#FFFFFF',
+                      fontSize: '0.8rem',
+                      fontWeight: 700,
+                      letterSpacing: '0.1em',
+                      textAlign: 'left',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      transition: 'all 0.2s ease',
+                    }}
+                  >
+                    <span>{cat.title}</span>
+                    <span style={{ fontSize: '0.75rem', opacity: 0.5 }}>→</span>
+                  </button>
+                ))}
+
+                <button
+                  onClick={() => handleCategorySelect('all')}
+                  style={{
+                    gridColumn: 'span 2',
+                    padding: '12px 14px',
+                    backgroundColor: 'rgba(212, 175, 55, 0.15)',
+                    border: '1px solid rgba(212, 175, 55, 0.4)',
+                    borderRadius: '8px',
+                    color: '#D4AF37',
+                    fontSize: '0.8rem',
+                    fontWeight: 800,
+                    letterSpacing: '0.12em',
+                    textAlign: 'center',
+                    cursor: 'pointer',
+                    textTransform: 'uppercase',
+                  }}
+                >
+                  EXPLORE ALL PRODUCTS →
+                </button>
+              </div>
+            </div>
+
+            <button
+              onClick={() => handleNavClick('about')}
+              style={{
+                textAlign: 'left',
+                fontSize: '1rem',
+                fontWeight: 800,
+                letterSpacing: '0.15em',
+                color: activePage === 'about' ? '#D4AF37' : '#FFFFFF',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                textTransform: 'uppercase',
+                marginTop: '8px',
+              }}
             >
-              <Heart size={16} /> Wishlist ({wishlist.length})
+              ABOUT US
             </button>
+
+            <button
+              onClick={() => handleNavClick('contact')}
+              style={{
+                textAlign: 'left',
+                fontSize: '1rem',
+                fontWeight: 800,
+                letterSpacing: '0.15em',
+                color: activePage === 'contact' ? '#D4AF37' : '#FFFFFF',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                textTransform: 'uppercase',
+              }}
+            >
+              CONTACT US
+            </button>
+          </div>
+
+          {/* Account & Wishlist Action Footer */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', paddingTop: '4px' }}>
+            <div style={{ display: 'flex', gap: '12px' }}>
+              {/* Account Button */}
+              <button
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  if (isAuthenticated) {
+                    router.push('/account');
+                  } else {
+                    setModalError('');
+                    setModalSuccess('');
+                    setIsUserModalOpen(true);
+                  }
+                }}
+                style={{
+                  flex: 1,
+                  padding: '12px 16px',
+                  backgroundColor: 'rgba(255, 255, 255, 0.08)',
+                  border: '1px solid rgba(255, 255, 255, 0.15)',
+                  borderRadius: '8px',
+                  color: '#FFFFFF',
+                  fontSize: '0.8rem',
+                  fontWeight: 700,
+                  letterSpacing: '0.1em',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
+                }}
+              >
+                <User size={16} style={{ color: '#D4AF37' }} />
+                <span>{isAuthenticated ? 'MY ACCOUNT' : 'LOG IN'}</span>
+              </button>
+
+              {/* Wishlist Button */}
+              <button
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  handleCategorySelect('all');
+                }}
+                style={{
+                  flex: 1,
+                  padding: '12px 16px',
+                  backgroundColor: 'rgba(255, 255, 255, 0.08)',
+                  border: '1px solid rgba(255, 255, 255, 0.15)',
+                  borderRadius: '8px',
+                  color: '#FFFFFF',
+                  fontSize: '0.8rem',
+                  fontWeight: 700,
+                  letterSpacing: '0.1em',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
+                }}
+              >
+                <Heart size={16} style={{ color: '#E05D5D' }} />
+                <span>WISHLIST ({wishlist.length})</span>
+              </button>
+            </div>
+
+            {/* Bottom Promo Note */}
+            <div style={{ textAlign: 'center', marginTop: '6px' }}>
+              <span style={{ fontSize: '0.675rem', color: '#A0A0A0', letterSpacing: '0.12em', textTransform: 'uppercase' }}>
+                ✨ COMPLIMENTARY EXPRESS SHIPPING OVER ₹2,500
+              </span>
+            </div>
           </div>
         </div>
       )}
@@ -726,6 +991,270 @@ export const Navbar: React.FC = () => {
 
       {/* Global Embedded Keyframes & Media Styles */}
       <style>{`
+        /* Tazaari custom classes to bypass Tailwind loading issues */
+        .tazaari-header {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          z-index: 1000;
+          margin-bottom: 0;
+        }
+
+        .tazaari-announcement-bar {
+          background-color: #121214;
+          color: #ffffff;
+          font-size: 0.65rem;
+          padding: 6px 0;
+          height: 28px;
+          display: flex;
+          align-items: center;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+          letter-spacing: 0.12em;
+          overflow: hidden;
+          white-space: nowrap;
+          width: 100%;
+        }
+
+        .tazaari-announcement-container {
+          width: 100%;
+          overflow: hidden;
+          padding: 0;
+        }
+
+        .tazaari-marquee {
+          display: inline-flex;
+          animation: marquee 25s linear infinite;
+        }
+
+        .tazaari-marquee-group {
+          display: inline-flex;
+          align-items: center;
+          gap: 48px;
+          padding-right: 48px;
+          font-weight: 600;
+          color: #ffffff;
+        }
+
+        .tazaari-marquee-item {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+        }
+
+        .tazaari-nav-wrapper {
+          backdrop-filter: blur(16px);
+          WebkitBackdropFilter: blur(16px);
+          transition: all 0.3s ease-in-out;
+        }
+
+        .tazaari-nav-container {
+          max-width: 1380px;
+          margin: 0 auto;
+          padding: 0 24px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 20px;
+        }
+
+        .tazaari-nav-left {
+          display: flex;
+          align-items: center;
+          gap: 32px;
+        }
+
+        .tazaari-nav-link {
+          font-family: var(--font-sans);
+          font-size: 0.85rem;
+          font-weight: 700;
+          letter-spacing: 0.15em;
+          text-transform: uppercase;
+          color: #ffffff;
+          background: transparent;
+          border: 0;
+          cursor: pointer;
+          padding-bottom: 4px;
+          transition: all 0.25s ease-in-out;
+          border-bottom: 2px solid transparent;
+          opacity: 0.8;
+          text-decoration: none;
+        }
+
+        .tazaari-nav-link:hover {
+          opacity: 1;
+          color: #ffffff;
+        }
+
+        .tazaari-nav-link.active {
+          opacity: 1;
+          border-bottom: 2px solid #D4AF37;
+        }
+
+        .tazaari-dropdown-trigger {
+          position: relative;
+        }
+
+        /* Bridge the hover gap to prevent dropdown closing when moving mouse downwards */
+        .tazaari-dropdown-trigger::after {
+          content: '';
+          position: absolute;
+          top: 100%;
+          left: 0;
+          right: 0;
+          height: 20px;
+          background: transparent;
+          z-index: 999;
+        }
+
+        .tazaari-mobile-toggle {
+          display: none;
+        }
+
+        .tazaari-nav-right {
+          display: flex;
+          align-items: center;
+          gap: 20px;
+        }
+
+        .tazaari-action-btn {
+          background: transparent;
+          border: 0;
+          color: #ffffff;
+          padding: 6px;
+          cursor: pointer;
+          display: inline-flex;
+          align-items: center;
+          position: relative;
+          transition: opacity 0.2s ease;
+        }
+
+        .tazaari-action-btn:hover {
+          opacity: 0.8;
+        }
+
+        .tazaari-badge {
+          position: absolute;
+          top: 0;
+          right: 0;
+          font-size: 0.6rem;
+          font-weight: 900;
+          width: 15px;
+          height: 15px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .tazaari-badge-gold {
+          background-color: var(--color-gold);
+          color: #121214;
+        }
+
+        .tazaari-badge-white {
+          background-color: #ffffff;
+          color: #121214;
+        }
+
+        .tazaari-desktop-action {
+          display: inline-flex;
+        }
+
+        /* Mega dropdown elements */
+        .mega-title-btn {
+          font-family: var(--font-sans);
+          font-size: 0.8125rem;
+          font-weight: 800;
+          letter-spacing: 0.14em;
+          color: #121214;
+          text-align: left;
+          background: none;
+          border: none;
+          cursor: pointer;
+          padding-bottom: 8px;
+          border-bottom: 2px solid #C5A059;
+          text-transform: uppercase;
+          transition: color 0.2s ease;
+        }
+
+        .mega-title-btn:hover {
+          color: #C5A059;
+        }
+
+        .mega-sub-btn {
+          background: none;
+          border: none;
+          padding: 0;
+          font-size: 0.8125rem;
+          font-weight: 500;
+          color: #555555;
+          cursor: pointer;
+          text-align: left;
+          transition: all 0.2s ease;
+        }
+
+        .mega-sub-btn:hover {
+          color: #C5A059;
+          transform: translateX(4px);
+        }
+
+        .mega-promo-img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          transition: transform 0.5s ease;
+        }
+
+        .mega-promo-img:hover {
+          transform: scale(1.06);
+        }
+
+        .tazaari-search-form {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          background-color: #ffffff;
+          border-radius: 9999px;
+          border: 1px solid rgba(0, 0, 0, 0.05);
+          box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+          position: absolute;
+          right: 0;
+          top: 50%;
+          transform: translateY(-50%);
+          z-index: 10;
+          width: 320px;
+          padding: 8px 18px;
+          animation: searchExpand 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .tazaari-search-input {
+          border: 0;
+          outline: none;
+          font-size: 0.8rem;
+          width: 100%;
+          color: #121214;
+          font-family: var(--font-sans);
+          background: transparent;
+        }
+
+        .tazaari-search-close {
+          border: 0;
+          background: transparent;
+          color: #999999;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 2px;
+        }
+
+        .tazaari-search-close:hover {
+          color: #121214;
+        }
+
+        /* Animations */
         @keyframes marquee {
           0% { transform: translateX(0); }
           100% { transform: translateX(-50%); }
@@ -736,7 +1265,27 @@ export const Navbar: React.FC = () => {
         }
         @keyframes searchExpand {
           from { width: 40px; opacity: 0; }
-          to { width: 100%; opacity: 1; }
+          to { width: 320px; opacity: 1; }
+        }
+
+        /* Responsive Rules */
+        @media (max-width: 1024px) {
+          .tazaari-nav-left {
+            display: none !important;
+          }
+          .tazaari-mobile-toggle {
+            display: flex !important;
+          }
+        }
+
+        @media (max-width: 768px) {
+          .tazaari-desktop-action {
+            display: none !important;
+          }
+          @keyframes searchExpand {
+            from { width: 40px; opacity: 0; }
+            to { width: 200px; opacity: 1; }
+          }
         }
       `}</style>
     </header>

@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useCart } from '../context/CartContext';
 import type { NormalizedProduct } from '../types/product';
 import { fetchProducts } from '../services/wooApi';
+import ProductCard from '../components/ProductCard';
 import {
   Heart, ShoppingBag, Star, ArrowLeft, ShieldCheck, Truck,
   Sparkles, Check, ChevronDown, ChevronUp, ZoomIn
@@ -595,37 +596,16 @@ export const ProductDetailPage: React.FC = () => {
               }}>
                 You May Also Like
               </h2>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '20px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '24px' }}>
                 {relatedProducts.map(rel => (
-                  <article
+                  <ProductCard
                     key={rel.id}
-                    className="related-card"
-                    onClick={() => { setSelectedProduct(rel); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-                    style={{ position: 'relative', paddingTop: '135%', overflow: 'hidden', backgroundColor: '#FAF8F5', cursor: 'pointer' }}
-                    itemScope itemType="https://schema.org/Product"
-                  >
-                    <meta itemProp="name" content={rel.name} />
-                    <img
-                      src={rel.images[0]}
-                      alt={rel.imageAlts[0] || rel.name}
-                      loading="lazy"
-                      srcSet={rel.imageSrcsets[0] || undefined}
-                      itemProp="image"
-                      style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.5s ease' }}
-                    />
-                    <div style={{
-                      position: 'absolute', bottom: 0, left: 0, right: 0,
-                      background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(10px)',
-                      borderTop: '1px solid rgba(255,255,255,0.6)', padding: '12px 14px'
-                    }}>
-                      <p style={{ fontFamily: 'var(--font-sans)', fontSize: '0.82rem', fontWeight: 800, color: '#111111', margin: '0 0 4px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                        {rel.name}
-                      </p>
-                      <span style={{ fontFamily: 'var(--font-sans)', fontSize: '0.82rem', color: rel.onSale ? 'var(--color-accent-rose)' : '#111111', fontWeight: 800 }}>
-                        ₹{rel.price.toLocaleString('en-IN')}
-                      </span>
-                    </div>
-                  </article>
+                    product={rel}
+                    onClick={(relProd) => {
+                      setSelectedProduct(relProd);
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                  />
                 ))}
               </div>
             </section>

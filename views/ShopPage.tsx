@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useCart } from '../context/CartContext';
 import { useProducts } from '../context/ProductContext';
+import ProductCard, { ProductCardSkeleton } from '../components/ProductCard';
 import { Search, X, ChevronLeft, ChevronRight, Loader, AlertCircle } from 'lucide-react';
 import type { NormalizedProduct } from '../types/product';
 
@@ -19,16 +20,6 @@ const usePageMeta = (title: string, description: string) => {
     meta.content = description;
   }, [title, description]);
 };
-
-// ─── Skeleton card ────────────────────────────────────────────────────────────
-const SkeletonCard: React.FC = () => (
-  <div style={{
-    position: 'relative', paddingTop: '135%', backgroundColor: '#F0EDE8',
-    borderRadius: '0px', overflow: 'hidden', animation: 'pulse 1.5s ease-in-out infinite'
-  }}>
-    <style>{`@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }`}</style>
-  </div>
-);
 
 // ─── Category slugs used in the sidebar ──────────────────────────────────────
 const SIDEBAR_CATEGORIES = [
@@ -54,6 +45,7 @@ export const ShopPage: React.FC = () => {
 
   const [sort, setSort] = useState('');
   const [localSearch, setLocalSearch] = useState(searchQuery);
+  const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
 
   // ─── SEO meta ──────────────────────────────────────────────────────────────
   const categoryLabel = SIDEBAR_CATEGORIES.find(c => c.slug === activeCategory)?.label || 'All Collections';
@@ -108,10 +100,198 @@ export const ShopPage: React.FC = () => {
   return (
     <div style={{ paddingTop: '85px', paddingBottom: '96px', backgroundColor: '#FFFFFF' }}>
 
+      {/* ── Global CSS for Responsive Shop Page ── */}
+      <style>{`
+        /* Desktop vs Mobile layout for ShopPage */
+        .shop-layout-grid {
+          display: grid;
+          grid-template-columns: 240px 1fr;
+          gap: 48px;
+          align-items: start;
+        }
+
+        .shop-sidebar {
+          position: sticky;
+          top: 100px;
+        }
+
+        .shop-mobile-filter-toggle {
+          display: none !important;
+        }
+
+        .shop-sidebar-content {
+          display: block;
+        }
+
+        .shop-product-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+          gap: 24px;
+        }
+
+        .shop-hero-section {
+          padding: 0 60px;
+          min-height: 460px;
+        }
+
+        .shop-hero-title {
+          font-size: 3.75rem;
+        }
+
+        .shop-categories-title {
+          font-family: var(--font-sans);
+          font-size: 1.1rem;
+          font-weight: 600;
+          color: #111111;
+          margin-bottom: 16px;
+        }
+
+        .shop-categories-list {
+          list-style: none;
+          padding: 0;
+          margin: 0;
+        }
+
+        .shop-categories-list li {
+          border-bottom: 1px solid #EAE6E1;
+        }
+
+        .shop-categories-list button {
+          width: 100%;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 14px 0;
+          background: none;
+          border: none;
+          cursor: pointer;
+          font-family: var(--font-sans);
+          font-size: 0.95rem;
+          font-weight: 500;
+          color: #666666;
+          transition: color 0.2s ease;
+          text-align: left;
+        }
+
+        .shop-categories-list button.active {
+          font-weight: 700;
+          color: #C5A059;
+        }
+
+        .shop-sidebar-filters {
+          display: block;
+        }
+
+        .shop-categories-desktop-only {
+          display: block;
+        }
+
+        .shop-categories-mobile-select-wrapper {
+          display: none;
+        }
+
+        /* Mobile / Tablet Responsive Styles */
+        @media (max-width: 1024px) {
+          .shop-layout-grid {
+            grid-template-columns: 1fr !important;
+            gap: 24px !important;
+          }
+          
+          .shop-sidebar {
+            position: relative !important;
+            top: 0 !important;
+            margin-bottom: 16px;
+          }
+
+          .shop-mobile-filter-toggle {
+            display: inline-flex !important;
+          }
+
+          .shop-sidebar-content {
+            display: none;
+            padding: 24px 20px;
+            background-color: #FAFAFA;
+            border: 1px solid #EAE6E1;
+            border-radius: 8px;
+            margin-bottom: 24px;
+          }
+
+          .shop-sidebar-content.open {
+            display: block !important;
+            animation: dropdownFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+          }
+
+          .shop-sidebar-filters {
+            display: grid !important;
+            grid-template-columns: 1fr 1fr !important;
+            gap: 16px !important;
+            margin-bottom: 20px !important;
+          }
+
+          .shop-categories-title {
+            font-size: 0.9rem !important;
+            color: #888888 !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.1em !important;
+            margin-bottom: 10px !important;
+            border-bottom: 1px solid #EAE6E1;
+            padding-bottom: 8px;
+          }
+
+          .shop-product-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 16px !important;
+          }
+
+          .shop-hero-section {
+            padding: 0 20px !important;
+            min-height: 260px !important;
+          }
+
+          .shop-hero-title {
+            font-size: 2.2rem !important;
+          }
+
+          .shop-categories-desktop-only {
+            display: none !important;
+          }
+
+          .shop-categories-mobile-select-wrapper {
+            display: block !important;
+          }
+        }
+
+        @media (max-width: 640px) {
+          .shop-sidebar-filters {
+            grid-template-columns: 1fr !important;
+            gap: 12px !important;
+            margin-bottom: 16px !important;
+          }
+
+          .shop-product-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 12px !important;
+          }
+
+          .shop-hero-section {
+            min-height: 200px !important;
+          }
+
+          .shop-hero-title {
+            font-size: 1.75rem !important;
+          }
+        }
+
+        @keyframes dropdownFadeIn {
+          from { opacity: 0; transform: translateY(8px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
+
       {/* ── Hero Parallelogram Banner ── */}
-      <section style={{
-        padding: '0 60px', overflow: 'hidden', position: 'relative',
-        minHeight: '460px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+      <section className="shop-hero-section" style={{
+        overflow: 'hidden', position: 'relative',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
         backgroundColor: '#FFFFFF'
       }}>
         {/* Skewed image strip */}
@@ -148,7 +328,7 @@ export const ShopPage: React.FC = () => {
         {/* Overlay text */}
         <div className="container" style={{ position: 'relative', zIndex: 3, textAlign: 'center' }}>
           <div style={{ maxWidth: '680px', margin: '0 auto' }}>
-            <h1 style={{ fontFamily: 'var(--font-serif)', fontSize: '3.75rem', fontWeight: 600, color: '#FFFFFF', margin: 0, textShadow: '0 4px 20px rgba(0,0,0,0.5)' }}>
+            <h1 className="shop-hero-title" style={{ fontFamily: 'var(--font-serif)', fontWeight: 600, color: '#FFFFFF', margin: 0, textShadow: '0 4px 20px rgba(0,0,0,0.5)' }}>
               {categoryTitles[activeCategory] || 'All Luxury Collections'}
             </h1>
             <p style={{ fontSize: '0.95rem', color: 'rgba(255,255,255,0.9)', marginTop: '10px', lineHeight: 1.6, textShadow: '0 2px 10px rgba(0,0,0,0.5)' }}>
@@ -175,94 +355,139 @@ export const ShopPage: React.FC = () => {
       {/* ── Main Section: Sidebar + Product Grid ── */}
       <section style={{ padding: '60px 0', backgroundColor: '#FFFFFF' }}>
         <div className="container">
-          <div style={{ display: 'grid', gridTemplateColumns: '240px 1fr', gap: '48px', alignItems: 'start' }}>
+          <div className="shop-layout-grid" style={{ alignItems: 'start' }}>
 
             {/* ── LEFT SIDEBAR ── */}
-            <aside style={{ position: 'sticky', top: '100px' }}>
+            <aside className="shop-sidebar">
 
-              {/* Search */}
-              <form onSubmit={handleSearchSubmit} style={{ marginBottom: '32px', display: 'flex', border: '1px solid #E0DCD7', borderRadius: '4px', overflow: 'hidden' }}>
-                <input
-                  type="search"
-                  placeholder="Search products…"
-                  value={localSearch}
-                  onChange={e => setLocalSearch(e.target.value)}
-                  style={{
-                    flex: 1, padding: '10px 14px', border: 'none', outline: 'none',
-                    fontFamily: 'var(--font-sans)', fontSize: '0.875rem', color: '#111111', backgroundColor: '#FAFAFA'
-                  }}
-                />
-                <button type="submit" style={{ padding: '0 12px', background: '#111111', border: 'none', cursor: 'pointer' }}>
-                  <Search size={14} style={{ color: '#FFFFFF' }} />
-                </button>
-              </form>
+              {/* Mobile Filter Toggle Button */}
+              <button
+                onClick={() => setIsMobileFiltersOpen(!isMobileFiltersOpen)}
+                className="shop-mobile-filter-toggle"
+                style={{
+                  width: '100%',
+                  padding: '14px 16px',
+                  backgroundColor: '#121214',
+                  color: '#FFFFFF',
+                  border: 'none',
+                  borderRadius: '4px',
+                  fontFamily: 'var(--font-sans)',
+                  fontSize: '0.85rem',
+                  fontWeight: 800,
+                  letterSpacing: '0.12em',
+                  textTransform: 'uppercase',
+                  display: 'none',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
+                  cursor: 'pointer',
+                  marginBottom: '16px',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+                }}
+              >
+                <span>Filter & Sort</span>
+                <span style={{ fontSize: '0.8rem', transition: 'transform 0.3s ease', transform: isMobileFiltersOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}>▼</span>
+              </button>
 
-              {/* Sort */}
-              <div style={{ marginBottom: '32px' }}>
-                <h3 style={{ fontFamily: 'var(--font-sans)', fontSize: '0.8rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#888888', marginBottom: '12px' }}>Sort By</h3>
-                <select
-                  value={sort}
-                  onChange={e => setSort(e.target.value)}
-                  style={{
-                    width: '100%', padding: '10px 14px', border: '1px solid #E0DCD7', borderRadius: '4px',
-                    fontFamily: 'var(--font-sans)', fontSize: '0.875rem', color: '#111111',
-                    backgroundColor: '#FAFAFA', cursor: 'pointer', appearance: 'none',
-                    backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")`,
-                    backgroundRepeat: 'no-repeat', backgroundPosition: 'right 12px center'
-                  }}
-                >
-                  {SORT_OPTIONS.map(opt => (
-                    <option key={opt.value} value={opt.value}>{opt.label}</option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Categories */}
-              <h3 style={{ fontFamily: 'var(--font-sans)', fontSize: '1.1rem', fontWeight: 600, color: '#111111', marginBottom: '16px' }}>Categories</h3>
-              <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-                <li style={{ borderBottom: '1px solid #EAE6E1' }}>
-                  <button
-                    onClick={() => setActiveCategory('all')}
-                    style={{
-                      width: '100%', display: 'flex', justifyContent: 'space-between',
-                      alignItems: 'center', padding: '14px 0', background: 'none', border: 'none',
-                      cursor: 'pointer', fontFamily: 'var(--font-sans)', fontSize: '0.95rem',
-                      fontWeight: activeCategory === 'all' ? 700 : 500,
-                      color: activeCategory === 'all' ? '#5c81b3' : '#666666'
-                    }}
-                  >
-                    <span>ALL</span>
-                    {activeCategory === 'all' && <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#5c81b3' }} />}
-                  </button>
-                </li>
-                {SIDEBAR_CATEGORIES.map(cat => (
-                  <li key={cat.slug} style={{ borderBottom: '1px solid #EAE6E1' }}>
-                    <button
-                      onClick={() => setActiveCategory(cat.slug)}
+              {/* Collapsible Content */}
+              <div className={`shop-sidebar-content ${isMobileFiltersOpen ? 'open' : ''}`}>
+                <div className="shop-sidebar-filters">
+                  {/* Search */}
+                  <form onSubmit={handleSearchSubmit} style={{ marginBottom: '32px', display: 'flex', border: '1px solid #E0DCD7', borderRadius: '4px', overflow: 'hidden' }}>
+                    <input
+                      type="search"
+                      placeholder="Search products…"
+                      value={localSearch}
+                      onChange={e => setLocalSearch(e.target.value)}
                       style={{
-                        width: '100%', display: 'flex', justifyContent: 'space-between',
-                        alignItems: 'center', padding: '14px 0', background: 'none', border: 'none',
-                        cursor: 'pointer', fontFamily: 'var(--font-sans)', fontSize: '0.95rem',
-                        fontWeight: activeCategory === cat.slug ? 700 : 500,
-                        color: activeCategory === cat.slug ? '#5c81b3' : '#666666',
-                        transition: 'color 0.2s ease'
+                        flex: 1, padding: '10px 14px', border: 'none', outline: 'none',
+                        fontFamily: 'var(--font-sans)', fontSize: '0.875rem', color: '#111111', backgroundColor: '#FAFAFA'
+                      }}
+                    />
+                    <button type="submit" style={{ padding: '0 12px', background: '#111111', border: 'none', cursor: 'pointer' }}>
+                      <Search size={14} style={{ color: '#FFFFFF' }} />
+                    </button>
+                  </form>
+
+                  {/* Sort */}
+                  <div style={{ marginBottom: '32px' }}>
+                    <h3 className="shop-sidebar-title" style={{ fontFamily: 'var(--font-sans)', fontSize: '0.8rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#888888', marginBottom: '12px' }}>Sort By</h3>
+                    <select
+                      value={sort}
+                      onChange={e => setSort(e.target.value)}
+                      style={{
+                        width: '100%', padding: '10px 14px', border: '1px solid #E0DCD7', borderRadius: '4px',
+                        fontFamily: 'var(--font-sans)', fontSize: '0.875rem', color: '#111111',
+                        backgroundColor: '#FAFAFA', cursor: 'pointer', appearance: 'none',
+                        backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")`,
+                        backgroundRepeat: 'no-repeat', backgroundPosition: 'right 12px center'
                       }}
                     >
-                      <span>{cat.label}</span>
-                      {activeCategory === cat.slug && <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#5c81b3' }} />}
-                    </button>
-                  </li>
-                ))}
-              </ul>
+                      {SORT_OPTIONS.map(opt => (
+                        <option key={opt.value} value={opt.value}>{opt.label}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
 
-              {activeCategory !== 'all' && (
-                <button
-                  onClick={() => setActiveCategory('all')}
-                  style={{ marginTop: '20px', fontSize: '0.8125rem', fontWeight: 700, color: '#5c81b3', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline' }}
-                >
-                  SHOW ALL PRODUCTS
-                </button>
-              )}
+                {/* Categories Dropdown (Mobile only) */}
+                <div className="shop-categories-mobile-select-wrapper">
+                  <h3 className="shop-sidebar-title" style={{ fontFamily: 'var(--font-sans)', fontSize: '0.8rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#888888', marginBottom: '12px' }}>Categories</h3>
+                  <select
+                    value={activeCategory}
+                    onChange={e => { setActiveCategory(e.target.value); setIsMobileFiltersOpen(false); }}
+                    style={{
+                      width: '100%', padding: '10px 14px', border: '1px solid #E0DCD7', borderRadius: '4px',
+                      fontFamily: 'var(--font-sans)', fontSize: '0.875rem', color: '#111111',
+                      backgroundColor: '#FAFAFA', cursor: 'pointer', appearance: 'none',
+                      backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")`,
+                      backgroundRepeat: 'no-repeat', backgroundPosition: 'right 12px center',
+                      marginBottom: '16px'
+                    }}
+                  >
+                    <option value="all">ALL</option>
+                    {SIDEBAR_CATEGORIES.map(cat => (
+                      <option key={cat.slug} value={cat.slug}>{cat.label.toUpperCase()}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Categories List (Desktop only) */}
+                <div className="shop-categories-desktop-only">
+                  <h3 className="shop-categories-title">Categories</h3>
+                  <ul className="shop-categories-list">
+                    <li>
+                      <button
+                        onClick={() => { setActiveCategory('all'); }}
+                        className={activeCategory === 'all' ? 'active' : ''}
+                      >
+                        <span>ALL</span>
+                        {activeCategory === 'all' && <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#C5A059' }} />}
+                      </button>
+                    </li>
+                    {SIDEBAR_CATEGORIES.map(cat => (
+                      <li key={cat.slug}>
+                        <button
+                          onClick={() => { setActiveCategory(cat.slug); }}
+                          className={activeCategory === cat.slug ? 'active' : ''}
+                        >
+                          <span>{cat.label}</span>
+                          {activeCategory === cat.slug && <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#C5A059' }} />}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+
+                  {activeCategory !== 'all' && (
+                    <button
+                      onClick={() => { setActiveCategory('all'); }}
+                      style={{ marginTop: '20px', fontSize: '0.8125rem', fontWeight: 700, color: '#C5A059', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline' }}
+                    >
+                      SHOW ALL PRODUCTS
+                    </button>
+                  )}
+                </div>
+              </div>
             </aside>
 
             {/* ── RIGHT: Product Grid ── */}
@@ -281,8 +506,8 @@ export const ShopPage: React.FC = () => {
 
               {/* Loading skeletons */}
               {isLoading && !error && (
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '24px' }}>
-                  {Array.from({ length: 12 }).map((_, i) => <SkeletonCard key={i} />)}
+                <div className="shop-product-grid">
+                  {Array.from({ length: 12 }).map((_, i) => <ProductCardSkeleton key={i} />)}
                 </div>
               )}
 
@@ -306,71 +531,13 @@ export const ShopPage: React.FC = () => {
                   <p style={{ fontSize: '0.8125rem', color: '#999', marginBottom: '24px', textAlign: 'right' }}>
                     {totalProducts} product{totalProducts !== 1 ? 's' : ''}
                   </p>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '24px' }}>
+                  <div className="shop-product-grid">
                     {products.map(product => (
-                      <article
+                      <ProductCard
                         key={product.id}
-                        onClick={() => handleProductClick(product)}
-                        className="product-card"
-                        style={{ position: 'relative', paddingTop: '135%', overflow: 'hidden', backgroundColor: '#FAF8F5', borderRadius: '0px', cursor: 'pointer' }}
-                        itemScope
-                        itemType="https://schema.org/Product"
-                      >
-                        {/* Structured data */}
-                        <meta itemProp="name" content={product.name} />
-                        <meta itemProp="sku" content={product.sku} />
-                        <span itemProp="offers" itemScope itemType="https://schema.org/Offer" style={{ display: 'none' }}>
-                          <meta itemProp="price" content={String(product.price)} />
-                          <meta itemProp="priceCurrency" content="INR" />
-                          <meta itemProp="availability" content={product.inStock ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock'} />
-                        </span>
-
-                        <img
-                          src={product.images[0]}
-                          alt={product.imageAlts[0] || product.name}
-                          loading="lazy"
-                          srcSet={product.imageSrcsets[0] || undefined}
-                          itemProp="image"
-                          style={{
-                            position: 'absolute', inset: 0, width: '100%', height: '100%',
-                            objectFit: 'cover', transition: 'transform 0.5s ease'
-                          }}
-                        />
-
-                        {/* On-Sale badge */}
-                        {product.onSale && (
-                          <div style={{
-                            position: 'absolute', top: '12px', left: '12px', zIndex: 2,
-                            backgroundColor: '#8B4A47', color: '#FFFFFF', fontSize: '0.65rem',
-                            fontWeight: 800, letterSpacing: '0.12em', padding: '4px 8px'
-                          }}>
-                            SALE
-                          </div>
-                        )}
-
-                        {/* Product info overlay */}
-                        <div style={{
-                          position: 'absolute', bottom: 0, left: 0, right: 0,
-                          background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(12px)',
-                          borderTop: '1px solid rgba(255,255,255,0.6)', padding: '14px 16px'
-                        }}>
-                          <p style={{ fontSize: '0.8rem', fontWeight: 800, color: '#111111', margin: '0 0 2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}
-                            itemProp="name"
-                          >
-                            {product.name}
-                          </p>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <span style={{ fontSize: '0.8rem', fontWeight: 700, color: product.onSale ? '#8B4A47' : '#111111' }}>
-                              ₹{product.price.toLocaleString('en-IN')}
-                            </span>
-                            {product.onSale && (
-                              <span style={{ fontSize: '0.75rem', color: '#999', textDecoration: 'line-through' }}>
-                                ₹{product.originalPrice.toLocaleString('en-IN')}
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      </article>
+                        product={product}
+                        onClick={handleProductClick}
+                      />
                     ))}
                   </div>
 

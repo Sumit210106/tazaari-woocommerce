@@ -38,7 +38,6 @@ function baseHeaders(): Record<string, string> {
     'Content-Type': 'application/json',
   };
   const token = getCartToken();
-  console.log('[wooCartApi] Using Cart-Token for request:', token);
   if (token) headers['Cart-Token'] = token;
   if (_nonce) headers['Nonce'] = _nonce;
   return headers;
@@ -47,12 +46,10 @@ function baseHeaders(): Record<string, string> {
 /** Extract and store the nonce and cart token from every response */
 function captureHeaders(response: Response): void {
   const nonce = response.headers.get('Nonce') || response.headers.get('nonce');
-  console.log('[wooCartApi] Captured Nonce:', nonce);
   if (nonce) {
     _nonce = nonce;
   }
   const cartToken = response.headers.get('Cart-Token') || response.headers.get('cart-token');
-  console.log('[wooCartApi] Captured Cart-Token:', cartToken);
   if (cartToken) {
     saveCartToken(cartToken);
   }
