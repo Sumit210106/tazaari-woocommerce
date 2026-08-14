@@ -19,7 +19,7 @@ export interface CartItem {
   wcKey: string;
 }
 
-export type PageType = 'home' | 'shop' | 'about' | 'contact' | 'product' | 'checkout';
+export type PageType = 'home' | 'shop' | 'about' | 'contact' | 'product' | 'checkout' | 'privacy' | 'returns' | 'shipping' | 'fabric-story';
 
 interface CartContextType {
   cart: CartItem[];
@@ -147,6 +147,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (prod) {
       setSelectedProduct(prod);
       setActivePage('product');
+      router.push(`/product/${prod.id}`);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
       setQuickViewState(null);
@@ -205,6 +206,14 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setActivePage('contact');
     } else if (pathname === '/checkout') {
       setActivePage('checkout');
+    } else if (pathname === '/privacy-policy') {
+      setActivePage('privacy');
+    } else if (pathname === '/returns-policy') {
+      setActivePage('returns');
+    } else if (pathname === '/shipping-policy') {
+      setActivePage('shipping');
+    } else if (pathname === '/fabric-story') {
+      setActivePage('fabric-story');
     } else if (pathname.startsWith('/product/')) {
       setActivePage('product');
     } else {
@@ -213,25 +222,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // eslint-disable-next-line react-hooks/set-state-in-effect
   }, [pathname]);
 
-  // Sync route path when global activePage state is changed programmatically
-  useEffect(() => {
-    let targetPath = '/';
-    if (activePage === 'shop') {
-      targetPath = '/shop';
-    } else if (activePage === 'about') {
-      targetPath = '/about';
-    } else if (activePage === 'contact') {
-      targetPath = '/contact';
-    } else if (activePage === 'checkout') {
-      targetPath = '/checkout';
-    } else if (activePage === 'product' && selectedProduct) {
-      targetPath = `/product/${selectedProduct.id}`;
-    }
 
-    if (window.location.pathname !== targetPath) {
-      router.push(targetPath);
-    }
-  }, [activePage, selectedProduct, router]);
 
   // Auto clear notification after 3s
   useEffect(() => {

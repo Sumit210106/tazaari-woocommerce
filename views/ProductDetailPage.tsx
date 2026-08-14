@@ -6,8 +6,9 @@ import type { NormalizedProduct } from '../types/product';
 import { fetchProducts } from '../services/wooApi';
 import ProductCard from '../components/ProductCard';
 import {
-  Heart, ShoppingBag, Star, ArrowLeft, ShieldCheck, Truck,
-  Sparkles, Check, ChevronDown, ChevronUp, ZoomIn
+  Heart, ShoppingBag, Star, ShieldCheck, Truck,
+  Sparkles, Check, ChevronDown, ChevronUp, ZoomIn, Ruler, X,
+  ChevronLeft, ChevronRight
 } from 'lucide-react';
 
 // ─── SEO ──────────────────────────────────────────────────────────────────────
@@ -58,10 +59,51 @@ const Accordion: React.FC<{ title: string; defaultOpen?: boolean; children: Reac
 };
 
 // ─── Rich HTML renderer (description from WooCommerce) ────────────────────────
+const sanitizeWooDescription = (html: string): string => {
+  if (!html) return '';
+
+  if (typeof window === 'undefined') {
+    return html
+      .replace(/<table[\s\S]*?<\/table>/gi, '')
+      .replace(/<(p|h[1-6]|div|strong|b|span)[^>]*>\s*(PRODUCT DETAILS|SPECIFICATION|SIZE CHART|KEY DETAILS|PRODUCT CARE)\s*<\/(p|h[1-6]|div|strong|b|span)>/gi, '')
+      .replace(/<strong>\s*(PRODUCT DETAILS|SPECIFICATION|SIZE CHART|KEY DETAILS|PRODUCT CARE)\s*<\/strong>/gi, '');
+  }
+
+  try {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+
+    // Remove tables
+    doc.querySelectorAll('table').forEach(el => el.remove());
+
+    const targetHeadings = ['PRODUCT DETAILS', 'SPECIFICATION', 'SIZE CHART', 'KEY DETAILS', 'PRODUCT CARE'];
+
+    const elements = Array.from(doc.body.querySelectorAll('*'));
+    elements.forEach(el => {
+      const text = el.textContent?.trim().toUpperCase() || '';
+      if (targetHeadings.includes(text)) {
+        if (text === 'KEY DETAILS' || text === 'PRODUCT CARE' || text === 'SPECIFICATION') {
+          let next = el.nextElementSibling;
+          while (next && (next.tagName === 'UL' || next.tagName === 'OL' || next.tagName === 'P' || next.tagName === 'TABLE' || next.tagName === 'DIV')) {
+            const nextEl = next;
+            next = next.nextElementSibling;
+            nextEl.remove();
+          }
+        }
+        el.remove();
+      }
+    });
+
+    return doc.body.innerHTML.trim();
+  } catch {
+    return html;
+  }
+};
+
 const RichDescription: React.FC<{ html: string }> = ({ html }) => (
   <div
     className="woo-description"
-    dangerouslySetInnerHTML={{ __html: html }}
+    dangerouslySetInnerHTML={{ __html: sanitizeWooDescription(html) }}
   />
 );
 
@@ -78,6 +120,8 @@ export const ProductDetailPage: React.FC = () => {
   const [relatedProducts, setRelatedProducts] = useState<NormalizedProduct[]>([]);
   const [zoomed, setZoomed] = useState(false);
   const [addedFeedback, setAddedFeedback] = useState(false);
+  const [isSizeChartOpen, setIsSizeChartOpen] = useState(false);
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const imgRef = useRef<HTMLDivElement>(null);
 
   const product = selectedProduct;
@@ -211,10 +255,7 @@ export const ProductDetailPage: React.FC = () => {
           font-weight: 700;
         }
         .woo-description table {
-          width: 100%;
-          border-collapse: collapse;
-          margin-bottom: 16px;
-          font-size: 0.85rem;
+          display: none !important;
         }
         .woo-description table td {
           border: 1px solid #E8E2D9;
@@ -240,10 +281,10 @@ export const ProductDetailPage: React.FC = () => {
       {/* JSON-LD */}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
-      <div style={{ backgroundColor: '#FFFFFF', color: '#111111', paddingTop: '100px', paddingBottom: '96px' }}>
+      <div style={{ backgroundColor: '#FFFFFF', color: '#111111', paddingTop: '160px', paddingBottom: '96px' }}>
         <div className="container">
 
-          {/* ── Breadcrumb ── */}
+          {/* ── Breadcrumb ──
           <nav aria-label="breadcrumb" style={{ marginBottom: '32px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
             <button
               onClick={() => setActivePage('shop')}
@@ -271,7 +312,7 @@ export const ProductDetailPage: React.FC = () => {
                 <meta itemProp="position" content="3" />
               </li>
             </ol>
-          </nav>
+          </nav> */}
 
           {/* ── Main 2-Column Layout ── */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '64px', alignItems: 'start', marginBottom: '96px' }}
@@ -282,12 +323,13 @@ export const ProductDetailPage: React.FC = () => {
               {/* Main Image */}
               <div
                 ref={imgRef}
-                onClick={() => setZoomed(z => !z)}
+                onClick={() => setIsLightboxOpen(true)}
                 style={{
-                  position: 'relative', width: '100%', paddingTop: '125%',
-                  backgroundColor: '#FAF8F5', overflow: 'hidden', marginBottom: '14px',
-                  cursor: zoomed ? 'zoom-out' : 'zoom-in',
-                  boxShadow: '0 6px 24px rgba(0,0,0,0.07)'
+                  position: 'relative', width: '100%', paddingTop: '133.33%',
+                  backgroundColor: '#FAF8F5', overflow: 'hidden', marginBottom: '16px',
+                  cursor: 'zoom-in',
+                  boxShadow: '0 6px 24px rgba(0,0,0,0.06)',
+                  borderRadius: '4px'
                 }}
               >
                 <img
@@ -300,8 +342,8 @@ export const ProductDetailPage: React.FC = () => {
                   style={{
                     position: 'absolute', inset: 0, width: '100%', height: '100%',
                     objectFit: 'cover',
-                    transition: 'transform 0.5s cubic-bezier(0.16,1,0.3,1)',
-                    transform: zoomed ? 'scale(1.15)' : 'scale(1)',
+                    objectPosition: 'top center',
+                    transition: 'transform 0.4s ease',
                   }}
                 />
                 {product.onSale && (
@@ -324,26 +366,28 @@ export const ProductDetailPage: React.FC = () => {
                     </span>
                   </div>
                 )}
-                <div style={{ position: 'absolute', bottom: '12px', right: '12px', zIndex: 2 }}>
-                  <ZoomIn size={20} style={{ color: 'rgba(255,255,255,0.9)', filter: 'drop-shadow(0 1px 3px rgba(0,0,0,0.4))' }} />
+                <div style={{ position: 'absolute', bottom: '12px', right: '12px', zIndex: 2, backgroundColor: 'rgba(255,255,255,0.85)', padding: '6px', borderRadius: '50%', display: 'flex' }}>
+                  <ZoomIn size={18} style={{ color: '#111111' }} />
                 </div>
               </div>
 
               {/* Thumbnail Strip */}
               {product.images.length > 1 && (
-                <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
                   {product.images.map((img, idx) => (
                     <button
                       key={idx}
                       className="product-thumb-btn"
-                      onClick={() => { setSelectedImage(idx); setZoomed(false); }}
+                      onClick={() => { setSelectedImage(idx); }}
                       style={{
-                        width: '72px', height: '90px', padding: 0, border: 'none',
+                        width: '76px', height: '96px', padding: 0, border: 'none',
                         outline: selectedImage === idx ? '2px solid #5c81b3' : '1px solid #EAE6E1',
-                        outlineOffset: selectedImage === idx ? '2px' : '0',
+                        outlineOffset: '2px',
                         overflow: 'hidden', cursor: 'pointer',
                         opacity: selectedImage === idx ? 1 : 0.65,
-                        backgroundColor: '#FAF8F5'
+                        backgroundColor: '#FAF8F5',
+                        borderRadius: '4px',
+                        transition: 'all 0.2s ease'
                       }}
                       aria-label={`View image ${idx + 1}`}
                     >
@@ -351,7 +395,7 @@ export const ProductDetailPage: React.FC = () => {
                         src={product.thumbnails[idx] || img}
                         alt={`${product.name} – view ${idx + 1}`}
                         loading="lazy"
-                        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center', display: 'block' }}
                       />
                     </button>
                   ))}
@@ -452,8 +496,12 @@ export const ProductDetailPage: React.FC = () => {
                     <span style={{ fontFamily: 'var(--font-sans)', fontSize: '0.8rem', fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#111111' }}>
                       SIZE:&nbsp;<span style={{ color: '#5c81b3', fontWeight: 900 }}>{activeSize}</span>
                     </span>
-                    <button style={{ fontFamily: 'var(--font-sans)', fontSize: '0.75rem', color: '#5c81b3', fontWeight: 700, textDecoration: 'underline', background: 'none', border: 'none', cursor: 'pointer' }}>
-                      Size Guide
+                    <button 
+                      onClick={() => setIsSizeChartOpen(true)}
+                      style={{ fontFamily: 'var(--font-sans)', fontSize: '0.75rem', color: '#5c81b3', fontWeight: 700, textDecoration: 'underline', background: 'none', border: 'none', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
+                    >
+                      <Ruler size={13} />
+                      <span>Size Chart</span>
                     </button>
                   </div>
                   <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
@@ -561,27 +609,60 @@ export const ProductDetailPage: React.FC = () => {
                 </Accordion>
               )}
 
-              <Accordion title="Shipping & Returns">
+              <Accordion title="Specifications">
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '12px', fontFamily: 'var(--font-sans)', fontSize: '0.85rem' }}>
+                  {[
+                    { label: 'Fabric / Material', value: '300 GSM Heavyweight Cotton' },
+                    { label: 'Silhouette', value: 'Relaxed Oversized Fit' },
+                    { label: 'Neckline', value: 'Reinforced Crew Neck' },
+                    { label: 'Sleeve Type', value: 'Drop Shoulder Half Sleeve' },
+                    { label: 'Finish', value: 'Pre-Shrunk & Bio-Washed' },
+                    { label: 'Origin', value: 'Crafted in India' }
+                  ].map((spec, i) => (
+                    <div key={i} style={{ padding: '10px 14px', backgroundColor: '#FAF8F5', border: '1px solid #EAE6E1', borderRadius: '4px' }}>
+                      <span style={{ fontSize: '0.725rem', fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#5c81b3', display: 'block', marginBottom: '4px' }}>
+                        {spec.label}
+                      </span>
+                      <span style={{ fontWeight: 600, color: '#111111' }}>
+                        {spec.value}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </Accordion>
+
+              <Accordion title="Key Details">
                 <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '10px' }}>
                   {[
-                    'Free express shipping on all orders across India',
-                    'Delivered within 3–5 business days',
-                    'International shipping available at checkout',
-                    '14-day hassle-free returns & exchanges',
-                    'Items must be unworn, unwashed, with tags intact',
+                    '300 GSM Heavyweight Combed Cotton Blend',
+                    'Relaxed Oversized Drop-Shoulder Silhouette',
+                    'Reinforced Ribbed Crew Collar for Structural Drape',
+                    'Pre-Shrunk Weave for Zero Shrinkage After Washing',
+                    'Handcrafted & Ethically Produced in Small Batches in India'
                   ].map(txt => (
                     <li key={txt} style={{ fontFamily: 'var(--font-sans)', fontSize: '0.875rem', color: '#555555', paddingLeft: '16px', position: 'relative', lineHeight: 1.6 }}>
-                      <span style={{ position: 'absolute', left: 0, color: 'var(--color-gold)', fontWeight: 700 }}>—</span>
+                      <span style={{ position: 'absolute', left: 0, color: '#5c81b3', fontWeight: 700 }}>—</span>
                       {txt}
                     </li>
                   ))}
                 </ul>
               </Accordion>
 
-              <Accordion title="Authenticity Guarantee">
-                <p style={{ fontFamily: 'var(--font-sans)', fontSize: '0.875rem', color: '#555555', lineHeight: 1.75 }}>
-                  Every Tazaari piece is crafted using 300 GSM heavyweight premium cotton blend, vetted for quality at every production stage. Each garment carries a signature authenticity tag. If you ever receive a defective item, we'll replace it at no cost — guaranteed.
-                </p>
+              <Accordion title="Product Care">
+                <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  {[
+                    'Machine wash cold (30°C) with like colors',
+                    'Wash inside out to protect fabric texture and print',
+                    'Do not bleach or use harsh chemical detergents',
+                    'Tumble dry low or line dry in shade for best longevity',
+                    'Warm iron on reverse side (Do not iron directly on print/embroidery)'
+                  ].map(txt => (
+                    <li key={txt} style={{ fontFamily: 'var(--font-sans)', fontSize: '0.875rem', color: '#555555', paddingLeft: '16px', position: 'relative', lineHeight: 1.6 }}>
+                      <span style={{ position: 'absolute', left: 0, color: '#5c81b3', fontWeight: 700 }}>—</span>
+                      {txt}
+                    </li>
+                  ))}
+                </ul>
               </Accordion>
             </div>
           </div>
@@ -613,6 +694,230 @@ export const ProductDetailPage: React.FC = () => {
 
         </div>
       </div>
+
+      {/* ── SIZE CHART MODAL ── */}
+      {isSizeChartOpen && (
+        <div
+          onClick={() => setIsSizeChartOpen(false)}
+          style={{
+            position: 'fixed',
+            inset: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.65)',
+            backdropFilter: 'blur(6px)',
+            zIndex: 9999,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '20px'
+          }}
+        >
+          <div
+            onClick={e => e.stopPropagation()}
+            style={{
+              backgroundColor: '#FFFFFF',
+              width: '100%',
+              maxWidth: '620px',
+              padding: '36px 32px',
+              borderRadius: '4px',
+              boxShadow: '0 20px 50px rgba(0,0,0,0.2)',
+              position: 'relative',
+              animation: 'dropdownFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards'
+            }}
+          >
+            {/* Modal Header */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', borderBottom: '1px solid #EAE6E1', paddingBottom: '16px' }}>
+              <div>
+                <h3 style={{ fontFamily: "var(--font-serif, 'Playfair Display', serif)", fontSize: '1.6rem', fontWeight: 500, margin: '0 0 4px', color: '#111111' }}>
+                  Size Chart &amp; Fit Guide
+                </h3>
+                <p style={{ fontSize: '0.8rem', color: '#777777', margin: 0 }}>
+                  Measurements in inches (Relaxed Heavyweight Oversized Fit)
+                </p>
+              </div>
+              <button
+                onClick={() => setIsSizeChartOpen(false)}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#111111', padding: '4px' }}
+                aria-label="Close modal"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* Measurement Table */}
+            <div style={{ overflowX: 'auto', marginBottom: '24px' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'center', fontSize: '0.85rem' }}>
+                <thead>
+                  <tr style={{ backgroundColor: '#FAF8F5', borderBottom: '2px solid #111111' }}>
+                    <th style={{ padding: '12px 14px', textAlign: 'left', fontWeight: 800, color: '#111111' }}>SIZE</th>
+                    <th style={{ padding: '12px 14px', fontWeight: 800, color: '#111111' }}>CHEST</th>
+                    <th style={{ padding: '12px 14px', fontWeight: 800, color: '#111111' }}>SHOULDER</th>
+                    <th style={{ padding: '12px 14px', fontWeight: 800, color: '#111111' }}>LENGTH</th>
+                    <th style={{ padding: '12px 14px', fontWeight: 800, color: '#111111' }}>SLEEVE</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    { size: 'S', chest: '42"', shoulder: '21"', length: '28"', sleeve: '8.5"' },
+                    { size: 'M', chest: '44"', shoulder: '22"', length: '29"', sleeve: '9.0"' },
+                    { size: 'L', chest: '46"', shoulder: '23"', length: '30"', sleeve: '9.5"' },
+                    { size: 'XL', chest: '48"', shoulder: '24"', length: '31"', sleeve: '10.0"' },
+                    { size: 'XXL', chest: '50"', shoulder: '25"', length: '32"', sleeve: '10.5"' },
+                  ].map((row, i) => (
+                    <tr key={row.size} style={{ borderBottom: '1px solid #EAE6E1', backgroundColor: i % 2 === 0 ? '#FFFFFF' : '#FAF8F5' }}>
+                      <td style={{ padding: '12px 14px', textAlign: 'left', fontWeight: 800, color: '#5c81b3' }}>{row.size}</td>
+                      <td style={{ padding: '12px 14px', color: '#444444' }}>{row.chest}</td>
+                      <td style={{ padding: '12px 14px', color: '#444444' }}>{row.shoulder}</td>
+                      <td style={{ padding: '12px 14px', color: '#444444' }}>{row.length}</td>
+                      <td style={{ padding: '12px 14px', color: '#444444' }}>{row.sleeve}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Fit Tip Note */}
+            <div style={{ backgroundColor: '#FAF8F5', borderLeft: '3px solid #5c81b3', padding: '14px 16px', fontSize: '0.825rem', color: '#444444', lineHeight: 1.6 }}>
+              <strong>Fit Guidance:</strong> Our silhouettes are designed with a contemporary boxy oversized fit. If you prefer a regular tailored fit, we recommend ordering one size smaller.
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── FULL IMAGE LIGHTBOX MODAL ── */}
+      {isLightboxOpen && (
+        <div
+          onClick={() => setIsLightboxOpen(false)}
+          style={{
+            position: 'fixed',
+            inset: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.92)',
+            backdropFilter: 'blur(10px)',
+            zIndex: 99999,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '24px'
+          }}
+        >
+          {/* Close button */}
+          <button
+            onClick={() => setIsLightboxOpen(false)}
+            style={{
+              position: 'absolute',
+              top: '20px',
+              right: '24px',
+              background: 'rgba(255, 255, 255, 0.15)',
+              border: 'none',
+              borderRadius: '50%',
+              width: '44px',
+              height: '44px',
+              color: '#FFFFFF',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              zIndex: 100000,
+              transition: 'background-color 0.2s ease'
+            }}
+            aria-label="Close full view"
+          >
+            <X size={24} />
+          </button>
+
+          {/* Previous image arrow */}
+          {product.images.length > 1 && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setSelectedImage(prev => (prev === 0 ? product.images.length - 1 : prev - 1));
+              }}
+              style={{
+                position: 'absolute',
+                left: '24px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                background: 'rgba(255, 255, 255, 0.15)',
+                border: 'none',
+                borderRadius: '50%',
+                width: '48px',
+                height: '48px',
+                color: '#FFFFFF',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                zIndex: 100000,
+                transition: 'background-color 0.2s ease'
+              }}
+              aria-label="Previous image"
+            >
+              <ChevronLeft size={28} />
+            </button>
+          )}
+
+          {/* Main Full Image */}
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              maxHeight: '90vh',
+              maxWidth: '90vw',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              position: 'relative'
+            }}
+          >
+            <img
+              src={product.images[selectedImage] || product.images[0]}
+              alt={product.name}
+              style={{
+                maxHeight: '85vh',
+                maxWidth: '85vw',
+                objectFit: 'contain',
+                borderRadius: '4px',
+                boxShadow: '0 20px 60px rgba(0,0,0,0.5)'
+              }}
+            />
+            {product.images.length > 1 && (
+              <div style={{ marginTop: '16px', color: 'rgba(255,255,255,0.7)', fontSize: '0.85rem', fontFamily: 'var(--font-sans)', fontWeight: 600 }}>
+                {selectedImage + 1} / {product.images.length}
+              </div>
+            )}
+          </div>
+
+          {/* Next image arrow */}
+          {product.images.length > 1 && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setSelectedImage(prev => (prev === product.images.length - 1 ? 0 : prev + 1));
+              }}
+              style={{
+                position: 'absolute',
+                right: '24px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                background: 'rgba(255, 255, 255, 0.15)',
+                border: 'none',
+                borderRadius: '50%',
+                width: '48px',
+                height: '48px',
+                color: '#FFFFFF',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                zIndex: 100000,
+                transition: 'background-color 0.2s ease'
+              }}
+              aria-label="Next image"
+            >
+              <ChevronRight size={28} />
+            </button>
+          )}
+        </div>
+      )}
     </>
   );
 };

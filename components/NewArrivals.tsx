@@ -94,16 +94,37 @@ export const NewArrivals: React.FC = () => {
           </div>
         </div>
 
+        {/* Global Styles for Mobile 2-column grid */}
+        <style>{`
+          .new-arrivals-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+          }
+          @media (max-width: 1024px) {
+            .new-arrivals-grid {
+              grid-template-columns: repeat(3, 1fr);
+              gap: 16px;
+            }
+          }
+          @media (max-width: 768px) {
+            .new-arrivals-grid {
+              grid-template-columns: repeat(2, 1fr);
+              gap: 12px;
+            }
+          }
+        `}</style>
+
         {/* Loading state */}
         {loading && (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '24px' }}>
+          <div className="new-arrivals-grid">
             {Array.from({ length: 8 }).map((_, i) => <ProductCardSkeleton key={i} />)}
           </div>
         )}
 
         {/* Product Grid - Shows all loaded tab products */}
         {!loading && tabProducts.length > 0 && (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '24px' }}>
+          <div className="new-arrivals-grid">
             {tabProducts.map(product => (
               <ProductCard key={product.id} product={product} />
             ))}

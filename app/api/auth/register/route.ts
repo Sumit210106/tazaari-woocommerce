@@ -12,7 +12,6 @@ export async function POST(request: Request) {
     const consumerSecret = process.env.WC_CONSUMER_SECRET;
 
     if (!consumerKey || !consumerSecret) {
-      console.error('WooCommerce API Keys are missing in environment variables.');
       return NextResponse.json(
         { error: 'Registration is currently unavailable (API keys missing on server).' },
         { status: 500 }

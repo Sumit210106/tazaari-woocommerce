@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import { useCart } from '../context/CartContext';
 import { useProducts } from '../context/ProductContext';
 import ProductCard, { ProductCardSkeleton } from '../components/ProductCard';
@@ -40,7 +41,8 @@ const SORT_OPTIONS: { value: string; label: string }[] = [
 ];
 
 export const ShopPage: React.FC = () => {
-  const { activeCategory, setActiveCategory, setQuickViewProduct, searchQuery, setSearchQuery } = useCart();
+  const router = useRouter();
+  const { activeCategory, setActiveCategory, setSelectedProduct, setActivePage, setQuickViewProduct, searchQuery, setSearchQuery } = useCart();
   const { products, isLoading, error, totalPages, currentPage, totalProducts, loadProducts } = useProducts();
 
   const [sort, setSort] = useState('');
@@ -84,7 +86,10 @@ export const ShopPage: React.FC = () => {
 
   // ─── Product card click → product detail ──────────────────────────────────
   const handleProductClick = (product: NormalizedProduct) => {
-    setQuickViewProduct(product);
+    setSelectedProduct(product);
+    setActivePage('product');
+    router.push(`/product/${product.id}`);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   // ─── Category title for the banner ────────────────────────────────────────

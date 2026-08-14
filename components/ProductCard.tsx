@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useCart } from '../context/CartContext';
 import type { NormalizedProduct as Product } from '../types/product';
 import { Heart, Eye, ShoppingBag, Check, Star } from 'lucide-react';
@@ -13,6 +14,20 @@ export interface ProductCardProps {
   style?: React.CSSProperties;
 }
 
+const SIZE_ORDER = ['XS', 'S', 'M', 'L', 'XL', 'XXL', '2XL', '3XL', '4XL'];
+
+const sortSizes = (sizes?: string[]): string[] => {
+  if (!sizes || sizes.length === 0) return [];
+  return [...sizes].sort((a, b) => {
+    const indexA = SIZE_ORDER.indexOf(a.trim().toUpperCase());
+    const indexB = SIZE_ORDER.indexOf(b.trim().toUpperCase());
+    if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+    if (indexA !== -1) return -1;
+    if (indexB !== -1) return 1;
+    return a.localeCompare(b);
+  });
+};
+
 export const ProductCard: React.FC<ProductCardProps> = ({
   product,
   onClick,
@@ -20,12 +35,14 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   className = '',
   style = {},
 }) => {
+  const router = useRouter();
   const { addToCart, setQuickViewProduct, setSelectedProduct, setActivePage, toggleWishlist, isInWishlist } = useCart();
   
   const [isHovered, setIsHovered] = useState(false);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [addedSuccess, setAddedSuccess] = useState(false);
 
+  const sortedSizes = sortSizes(product.sizes);
   const inWishlist = isInWishlist(product.id);
   const hasSecondaryImage = product.images && product.images.length > 1;
   const primaryImage = product.images[0] || 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&q=80&w=800';
@@ -46,6 +63,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
     } else {
       setSelectedProduct(product);
       setActivePage('product');
+      router.push(`/product/${product.id}`);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
@@ -137,9 +155,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             width: '100%',
             height: '100%',
             objectFit: 'cover',
+            objectPosition: 'top center',
             transition: 'all 0.6s cubic-bezier(0.25, 0.8, 0.25, 1)',
             opacity: isHovered && secondaryImage ? 0 : 1,
-            transform: isHovered && !secondaryImage ? 'scale(1.06)' : 'scale(1)',
+            transform: isHovered && !secondaryImage ? 'scale(1.05)' : 'scale(1)',
           }}
         />
 
@@ -156,6 +175,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
               width: '100%',
               height: '100%',
               objectFit: 'cover',
+              objectPosition: 'top center',
               transition: 'all 0.6s cubic-bezier(0.25, 0.8, 0.25, 1)',
               opacity: isHovered ? 1 : 0,
               transform: isHovered ? 'scale(1.04)' : 'scale(1)',
@@ -323,138 +343,18 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           </button>
         </div>
 
-        {/* ── FLOATING HOVER ACTION BAR (Quick Add) ── */}
-        <div
-          style={{
-            position: 'absolute',
-            bottom: '12px',
-            left: '12px',
-            right: '12px',
-            zIndex: 4,
-            opacity: isHovered ? 1 : 0,
-            transform: isHovered ? 'translateY(0)' : 'translateY(12px)',
-            transition: 'all 0.35s cubic-bezier(0.16, 1, 0.3, 1)',
-            pointerEvents: isHovered ? 'auto' : 'none',
-          }}
-        >
-          {/* Interactive Size Quick Selection (if product has sizes) */}
-          {product.sizes && product.sizes.length > 0 ? (
-            <div
-              style={{
-                backgroundColor: 'rgba(255, 255, 255, 0.94)',
-                backdropFilter: 'blur(14px)',
-                WebkitBackdropFilter: 'blur(14px)',
-                padding: '8px 10px',
-                borderRadius: '8px',
-                border: '1px solid rgba(255, 255, 255, 0.8)',
-                boxShadow: '0 8px 24px rgba(0, 0, 0, 0.12)',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '6px',
-              }}
-            >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontSize: '0.65rem', fontWeight: 800, letterSpacing: '0.12em', color: '#666666', textTransform: 'uppercase' }}>
-                  {addedSuccess ? 'ADDED TO BAG ✓' : 'QUICK ADD SIZE'}
-                </span>
-              </div>
-              <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
-                {product.sizes.slice(0, 5).map((size) => (
-                  <button
-                    key={size}
-                    onClick={(e) => handleQuickAdd(e, size)}
-                    style={{
-                      flex: 1,
-                      minWidth: '28px',
-                      padding: '5px 0',
-                      fontSize: '0.7rem',
-                      fontWeight: 700,
-                      borderRadius: '4px',
-                      border: '1px solid #E0DCD7',
-                      backgroundColor: '#FFFFFF',
-                      color: '#121214',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s ease',
-                      textAlign: 'center',
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = '#121214';
-                      e.currentTarget.style.color = '#FFFFFF';
-                      e.currentTarget.style.borderColor = '#121214';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = '#FFFFFF';
-                      e.currentTarget.style.color = '#121214';
-                      e.currentTarget.style.borderColor = '#E0DCD7';
-                    }}
-                  >
-                    {size}
-                  </button>
-                ))}
-              </div>
-            </div>
-          ) : (
-            /* Single Quick Add Button */
-            <button
-              onClick={(e) => handleQuickAdd(e)}
-              disabled={!product.inStock}
-              style={{
-                width: '100%',
-                padding: '10px 14px',
-                backgroundColor: addedSuccess ? '#2E7D32' : '#121214',
-                color: '#FFFFFF',
-                fontSize: '0.725rem',
-                fontWeight: 800,
-                letterSpacing: '0.14em',
-                textTransform: 'uppercase',
-                border: 'none',
-                borderRadius: '8px',
-                cursor: product.inStock ? 'pointer' : 'not-allowed',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px',
-                boxShadow: '0 8px 20px rgba(0, 0, 0, 0.18)',
-                transition: 'all 0.25s ease',
-              }}
-              onMouseEnter={(e) => {
-                if (product.inStock && !addedSuccess) {
-                  e.currentTarget.style.backgroundColor = '#C5A059';
-                  e.currentTarget.style.color = '#121214';
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (product.inStock && !addedSuccess) {
-                  e.currentTarget.style.backgroundColor = '#121214';
-                  e.currentTarget.style.color = '#FFFFFF';
-                }
-              }}
-            >
-              {addedSuccess ? (
-                <>
-                  <Check size={14} />
-                  <span>ADDED TO BAG</span>
-                </>
-              ) : (
-                <>
-                  <ShoppingBag size={14} />
-                  <span>{product.inStock ? 'ADD TO BAG' : 'OUT OF STOCK'}</span>
-                </>
-              )}
-            </button>
-          )}
-        </div>
       </div>
 
       {/* ── DETAILS SECTION ── */}
       <div
         style={{
-          padding: '16px 14px 18px',
+          padding: '16px 14px 16px',
           display: 'flex',
           flexDirection: 'column',
           flexGrow: 1,
           justifyContent: 'space-between',
           backgroundColor: '#FFFFFF',
+          gap: '10px'
         }}
       >
         <div>
@@ -474,7 +374,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                 fontWeight: 700,
                 letterSpacing: '0.14em',
                 textTransform: 'uppercase',
-                color: '#8A8A8A',
+                color: '#5c81b3',
               }}
             >
               {categoryName}
@@ -496,31 +396,29 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             itemProp="name"
             style={{
               fontFamily: 'var(--font-sans)',
-              fontSize: '0.9rem',
+              fontSize: '0.925rem',
               fontWeight: 600,
-              color: isHovered ? '#C5A059' : '#121214',
+              color: isHovered ? '#5c81b3' : '#121214',
               lineHeight: 1.35,
-              margin: '0 0 10px 0',
+              margin: '0 0 8px 0',
               display: '-webkit-box',
               WebkitLineClamp: 2,
               WebkitBoxOrient: 'vertical',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
-              height: '2.4em',
+              height: '2.5em',
               transition: 'color 0.25s ease',
             }}
           >
             {product.name}
           </h3>
-        </div>
 
-        {/* Price & Savings Block */}
-        <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginTop: 'auto', paddingTop: '4px' }}>
-          <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px', flexWrap: 'wrap' }}>
+          {/* Price Block */}
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px', marginBottom: '4px' }}>
             <span
               style={{
                 fontFamily: 'var(--font-sans)',
-                fontSize: '1rem',
+                fontSize: '1.05rem',
                 fontWeight: 800,
                 color: product.onSale ? '#8B4A47' : '#121214',
                 letterSpacing: '-0.01em',
@@ -543,21 +441,102 @@ export const ProductCard: React.FC<ProductCardProps> = ({
               </span>
             )}
           </div>
+        </div>
 
-          {/* Size Pill preview */}
-          {product.sizes && product.sizes.length > 0 && (
-            <span
+        {/* ── ALWAYS VISIBLE SIZE SELECTOR & QUICK ADD (Sorted S, M, L, XL...) ── */}
+        {sortedSizes && sortedSizes.length > 0 ? (
+          <div style={{ borderTop: '1px solid #F0ECE6', paddingTop: '10px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+              <span style={{ fontSize: '0.625rem', fontWeight: 800, letterSpacing: '0.12em', color: '#888888', textTransform: 'uppercase' }}>
+                {addedSuccess ? 'ADDED TO BAG ✓' : 'SELECT SIZE'}
+              </span>
+              {selectedSize && (
+                <span style={{ fontSize: '0.625rem', fontWeight: 800, color: '#5c81b3' }}>
+                  {selectedSize}
+                </span>
+              )}
+            </div>
+            <div style={{ display: 'flex', gap: '5px', flexWrap: 'wrap' }}>
+              {sortedSizes.slice(0, 6).map((size) => (
+                <button
+                  key={size}
+                  onClick={(e) => {
+                    setSelectedSize(size);
+                    handleQuickAdd(e, size);
+                  }}
+                  style={{
+                    flex: 1,
+                    minWidth: '28px',
+                    padding: '5px 0',
+                    fontSize: '0.7rem',
+                    fontWeight: 700,
+                    borderRadius: '4px',
+                    border: selectedSize === size ? '1px solid #121214' : '1px solid #E0DCD7',
+                    backgroundColor: selectedSize === size ? '#121214' : '#FFFFFF',
+                    color: selectedSize === size ? '#FFFFFF' : '#121214',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease',
+                    textAlign: 'center',
+                  }}
+                  onMouseEnter={(e) => {
+                    if (selectedSize !== size) {
+                      e.currentTarget.style.backgroundColor = '#5c81b3';
+                      e.currentTarget.style.color = '#FFFFFF';
+                      e.currentTarget.style.borderColor = '#5c81b3';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (selectedSize !== size) {
+                      e.currentTarget.style.backgroundColor = '#FFFFFF';
+                      e.currentTarget.style.color = '#121214';
+                      e.currentTarget.style.borderColor = '#E0DCD7';
+                    }
+                  }}
+                >
+                  {size}
+                </button>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <div style={{ borderTop: '1px solid #F0ECE6', paddingTop: '10px' }}>
+            <button
+              onClick={(e) => handleQuickAdd(e)}
+              disabled={!product.inStock}
               style={{
-                fontSize: '0.65rem',
-                fontWeight: 600,
-                color: '#8A8A8A',
-                letterSpacing: '0.05em',
+                width: '100%',
+                padding: '8px 12px',
+                backgroundColor: addedSuccess ? '#2E7D32' : '#121214',
+                color: '#FFFFFF',
+                fontSize: '0.725rem',
+                fontWeight: 800,
+                letterSpacing: '0.12em',
+                textTransform: 'uppercase',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: product.inStock ? 'pointer' : 'not-allowed',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '6px',
+                transition: 'all 0.2s ease'
+              }}
+              onMouseEnter={(e) => {
+                if (product.inStock && !addedSuccess) {
+                  e.currentTarget.style.backgroundColor = '#5c81b3';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (product.inStock && !addedSuccess) {
+                  e.currentTarget.style.backgroundColor = '#121214';
+                }
               }}
             >
-              {product.sizes.length} Sizes
-            </span>
-          )}
-        </div>
+              {addedSuccess ? <Check size={14} /> : <ShoppingBag size={14} />}
+              <span>{addedSuccess ? 'ADDED TO BAG' : (product.inStock ? 'ADD TO BAG' : 'OUT OF STOCK')}</span>
+            </button>
+          </div>
+        )}
       </div>
     </article>
   );

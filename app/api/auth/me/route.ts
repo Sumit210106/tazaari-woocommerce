@@ -77,7 +77,6 @@ export async function GET() {
     });
 
   } catch (error) {
-    console.error('Auth /me error:', error);
     return NextResponse.json({ authenticated: false, error: 'Internal server error.' }, { status: 500 });
   }
 }

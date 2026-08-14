@@ -8,10 +8,9 @@ import {
   FaPinterestP, 
   FaYoutube, 
   FaPhoneAlt, 
-  FaEnvelope, 
-  FaMapMarkerAlt 
+  FaEnvelope,
+  FaMapMarkerAlt
 } from 'react-icons/fa';
-
 import { useRouter } from 'next/navigation';
 
 export const Footer: React.FC = () => {
@@ -44,18 +43,18 @@ export const Footer: React.FC = () => {
       fontFamily: 'var(--font-sans)',
       overflow: 'hidden'
     }}>
-      {/* Decorative subtle gradient overlay */}
+      {/* Decorative subtle gold accent line */}
       <div style={{
         position: 'absolute',
         top: 0,
         left: 0,
         right: 0,
         height: '2px',
-        background: 'linear-gradient(90deg, transparent, var(--color-gold), transparent)',
+        background: 'linear-gradient(90deg, transparent, #5c81b3, transparent)',
         opacity: 0.6
       }} />
 
-      <div className="container">
+      <div className="container" style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 24px' }}>
         
         {/* Main Footer Grid */}
         <div style={{ 
@@ -65,12 +64,12 @@ export const Footer: React.FC = () => {
           marginBottom: '64px' 
         }}>
           
-          {/* Brand Info Column */}
+          {/* Brand Info & Contact Column */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
             <div>
               <img
                 src="/logo-white-transparent.png"
-                alt="TAZAARI"
+                alt="Tazaari"
                 style={{
                   height: '36px',
                   maxWidth: '160px',
@@ -87,9 +86,24 @@ export const Footer: React.FC = () => {
             }}>
               Handcrafted streetwear born in India, tailored for the modern urban wardrobe. Combining luxury heavyweight textiles with minimalist silhouettes.
             </p>
-            
+
+            <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '0.85rem', padding: 0, margin: 0 }}>
+              <li style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                <FaPhoneAlt size={13} style={{ color: '#5c81b3', flexShrink: 0 }} />
+                <a href="tel:+918591908733" style={{ color: '#A0A0A0', textDecoration: 'none', transition: 'color 0.2s ease' }} className="footer-link">
+                  +91 8591 9087 33
+                </a>
+              </li>
+              <li style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                <FaEnvelope size={14} style={{ color: '#5c81b3', flexShrink: 0 }} />
+                <a href="mailto:info@tazaari.com" style={{ color: '#A0A0A0', textDecoration: 'none', transition: 'color 0.2s ease' }} className="footer-link">
+                  info@tazaari.com
+                </a>
+              </li>
+            </ul>
+
             {/* Social Icons */}
-            <div style={{ display: 'flex', gap: '14px', marginTop: '8px' }}>
+            <div style={{ display: 'flex', gap: '14px', marginTop: '4px' }}>
               {[
                 { icon: FaInstagram, url: 'https://www.instagram.com/tazaariofficial/', label: 'Instagram' },
                 { icon: FaFacebookF, url: 'https://facebook.com', label: 'Facebook' },
@@ -125,7 +139,7 @@ export const Footer: React.FC = () => {
             </div>
           </div>
 
-          {/* Column 1: Collections */}
+          {/* Column 1: Categories */}
           <div>
             <h4 style={{ 
               fontFamily: 'var(--font-sans)', 
@@ -136,15 +150,13 @@ export const Footer: React.FC = () => {
               marginBottom: '24px',
               textTransform: 'uppercase'
             }}>
-              Collections
+              Categories
             </h4>
             <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '0.85rem', padding: 0, margin: 0 }}>
               {[
                 { name: 'Men', slug: 'man' },
                 { name: 'Women', slug: 'woman' },
-                { name: 'Unisex', slug: 'unisex' },
-                { name: 'New Arrivals', slug: 'new-arrivals' },
-                { name: 'Essentials', slug: 'essentials' }
+                { name: 'Unisex', slug: 'unisex' }
               ].map(cat => (
                 <li key={cat.slug}>
                   <button 
@@ -169,7 +181,7 @@ export const Footer: React.FC = () => {
             </ul>
           </div>
 
-          {/* Column 2: Assistance */}
+          {/* Column 2: Useful Links */}
           <div>
             <h4 style={{ 
               fontFamily: 'var(--font-sans)', 
@@ -180,19 +192,18 @@ export const Footer: React.FC = () => {
               marginBottom: '24px',
               textTransform: 'uppercase'
             }}>
-              Assistance
+              Useful Links
             </h4>
             <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '0.85rem', padding: 0, margin: 0 }}>
               {[
-                { name: 'Shop All Pieces', page: 'shop' as const },
-                { name: 'Track Order', page: 'contact' as const },
-                { name: 'Contact Support', page: 'contact' as const },
-                { name: 'Fabric & Craft Story', page: 'about' as const },
-                { name: 'Sustainability Commitment', page: 'about' as const }
+                { name: 'Shop', action: () => handleLinkClick('shop') },
+                { name: 'My Account', action: () => { router.push('/account'); window.scrollTo({ top: 0, behavior: 'smooth' }); } },
+                { name: 'Contact Us', action: () => handleLinkClick('contact') },
+                { name: 'Fabric Story', action: () => { setActivePage('fabric-story'); router.push('/fabric-story'); window.scrollTo({ top: 0, behavior: 'smooth' }); } }
               ].map((link, i) => (
                 <li key={i}>
                   <button 
-                    onClick={() => handleLinkClick(link.page)} 
+                    onClick={link.action} 
                     className="footer-link"
                     style={{ 
                       color: '#A0A0A0', 
@@ -213,7 +224,7 @@ export const Footer: React.FC = () => {
             </ul>
           </div>
 
-          {/* Column 3: Contact & Studio Info */}
+          {/* Column 3: Information */}
           <div>
             <h4 style={{ 
               fontFamily: 'var(--font-sans)', 
@@ -224,51 +235,57 @@ export const Footer: React.FC = () => {
               marginBottom: '24px',
               textTransform: 'uppercase'
             }}>
-              Tazaari Studio
+              Information
             </h4>
-            <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '16px', fontSize: '0.85rem', padding: 0, margin: 0 }}>
-              <li style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
-                <FaMapMarkerAlt size={15} style={{ color: 'var(--color-gold)', marginTop: '3px', flexShrink: 0 }} />
-                <span style={{ color: '#A0A0A0', lineHeight: 1.5 }}>
-                  Mumbai, Maharashtra, India
-                </span>
-              </li>
-              <li style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-                <FaPhoneAlt size={13} style={{ color: 'var(--color-gold)', flexShrink: 0 }} />
-                <a href="tel:+918591908733" style={{ color: '#A0A0A0', textDecoration: 'none', transition: 'color 0.2s ease' }} className="footer-link">
-                  +91 8591 9087 33
-                </a>
-              </li>
-              <li style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-                <FaEnvelope size={14} style={{ color: 'var(--color-gold)', flexShrink: 0 }} />
-                <a href="mailto:info@tazaari.com" style={{ color: '#A0A0A0', textDecoration: 'none', transition: 'color 0.2s ease' }} className="footer-link">
-                  info@tazaari.com
-                </a>
-              </li>
+            <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '0.85rem', padding: 0, margin: 0 }}>
+              {[
+                { name: 'About Us', action: () => handleLinkClick('about') },
+                { name: 'Privacy Policy', action: () => { setActivePage('privacy'); router.push('/privacy-policy'); window.scrollTo({ top: 0, behavior: 'smooth' }); } },
+                { name: 'Returns Policy', action: () => { setActivePage('returns'); router.push('/returns-policy'); window.scrollTo({ top: 0, behavior: 'smooth' }); } },
+                { name: 'Shipping Policy', action: () => { setActivePage('shipping'); router.push('/shipping-policy'); window.scrollTo({ top: 0, behavior: 'smooth' }); } }
+              ].map((link, i) => (
+                <li key={i}>
+                  <button 
+                    onClick={link.action} 
+                    className="footer-link"
+                    style={{ 
+                      color: '#A0A0A0', 
+                      background: 'none', 
+                      border: 'none', 
+                      cursor: 'pointer', 
+                      padding: 0,
+                      fontFamily: 'var(--font-sans)',
+                      fontSize: '0.85rem',
+                      transition: 'all 0.2s ease',
+                      textAlign: 'left'
+                    }}
+                  >
+                    {link.name}
+                  </button>
+                </li>
+              ))}
             </ul>
           </div>
 
         </div>
 
-        {/* Bottom Copyright & Fine Print Bar */}
+        {/* Bottom Copyright Bar */}
         <div style={{ 
           borderTop: '1px solid rgba(255, 255, 255, 0.08)', 
           paddingTop: '28px', 
-          display: 'flex', 
-          flexWrap: 'wrap', 
-          justifyContent: 'space-between', 
-          alignItems: 'center', 
-          gap: '16px', 
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          gap: '16px',
           fontSize: '0.75rem', 
           color: '#888888' 
         }}>
           <div>
-            © {new Date().getFullYear()} TAZAARI. All rights reserved. Designed &amp; Crafted in India.
+            Copyright © {new Date().getFullYear()} Tazaari
           </div>
-          <div style={{ display: 'flex', gap: '20px' }}>
-            <span style={{ cursor: 'pointer', transition: 'color 0.2s' }} className="footer-link" onClick={() => handleLinkClick('about')}>Privacy Policy</span>
-            <span style={{ cursor: 'pointer', transition: 'color 0.2s' }} className="footer-link" onClick={() => handleLinkClick('contact')}>Terms of Service</span>
-            <span style={{ cursor: 'pointer', transition: 'color 0.2s' }} className="footer-link" onClick={() => handleLinkClick('contact')}>Shipping &amp; Returns</span>
+          <div>
+            Accepted payment methods
           </div>
         </div>
 
@@ -280,8 +297,8 @@ export const Footer: React.FC = () => {
           color: #FFFFFF !important;
         }
         .footer-social-link:hover {
-          background-color: var(--color-gold) !important;
-          color: #121214 !important;
+          background-color: #5c81b3 !important;
+          color: #FFFFFF !important;
           transform: translateY(-2px);
         }
       `}</style>
