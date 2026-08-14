@@ -478,7 +478,7 @@ export const ContactPage: React.FC = () => {
       </section>
 
       {/* Frequently Asked Questions */}
-      <section style={{ padding: '60px 24px 100px', maxWidth: '920px', margin: '0 auto' }}>
+      <section style={{ padding: '120px 24px 100px', maxWidth: '920px', margin: '0 auto' }}>
         <div style={{ textAlign: 'center', marginBottom: '48px' }}>
           <span style={{ fontSize: '0.75rem', letterSpacing: '0.25em', textTransform: 'uppercase', color: '#D4AF37', fontWeight: 800, display: 'block', marginBottom: '10px' }}>
             CLIENT INQUIRIES & POLICIES

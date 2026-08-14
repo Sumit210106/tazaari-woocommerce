@@ -486,11 +486,11 @@ export const Navbar: React.FC = () => {
             top: '100%',
             height: 'calc(100vh - 100%)',
             maxHeight: 'calc(100vh - 120px)',
-            backgroundColor: 'rgba(18, 18, 20, 0.98)',
+            backgroundColor: '#FFFFFF',
             backdropFilter: 'blur(20px)',
             WebkitBackdropFilter: 'blur(20px)',
-            borderBottom: '1px solid rgba(212, 175, 55, 0.3)',
-            boxShadow: '0 24px 60px rgba(0, 0, 0, 0.4)',
+            borderBottom: '3px solid #5c81b3',
+            boxShadow: '0 24px 60px rgba(0, 0, 0, 0.12)',
             padding: '24px 20px 32px',
             display: 'flex',
             flexDirection: 'column',
@@ -498,7 +498,7 @@ export const Navbar: React.FC = () => {
             zIndex: 999,
             overflowY: 'auto',
             animation: 'dropdownFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards',
-            color: '#FFFFFF',
+            color: '#111111',
             fontFamily: 'var(--font-sans)',
           }}
         >
@@ -513,14 +513,14 @@ export const Navbar: React.FC = () => {
             style={{
               display: 'flex',
               alignItems: 'center',
-              backgroundColor: 'rgba(255, 255, 255, 0.08)',
+              backgroundColor: '#F4F4F6',
               borderRadius: '8px',
-              border: '1px solid rgba(255, 255, 255, 0.15)',
+              border: '1px solid #5c81b3',
               padding: '10px 14px',
               gap: '10px',
             }}
           >
-            <Search size={16} style={{ color: '#D4AF37' }} />
+            <Search size={16} style={{ color: '#5c81b3' }} />
             <input
               type="text"
               placeholder="Search streetwear, tees, apparel..."
@@ -537,7 +537,7 @@ export const Navbar: React.FC = () => {
                 background: 'none',
                 border: 'none',
                 outline: 'none',
-                color: '#FFFFFF',
+                color: '#111111',
                 fontSize: '0.85rem',
                 fontFamily: 'inherit',
               }}
@@ -546,7 +546,7 @@ export const Navbar: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setSearchQuery('')}
-                style={{ background: 'none', border: 'none', color: '#999', cursor: 'pointer', padding: 0 }}
+                style={{ background: 'none', border: 'none', color: '#666', cursor: 'pointer', padding: 0 }}
               >
                 <X size={14} />
               </button>
@@ -554,7 +554,7 @@ export const Navbar: React.FC = () => {
           </form>
 
           {/* Primary Mobile Navigation Links */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', borderBottom: '1px solid rgba(255, 255, 255, 0.1)', paddingBottom: '16px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', borderBottom: '1px solid #EAE6E1', paddingBottom: '16px' }}>
             <button
               onClick={() => handleNavClick('home')}
               style={{
@@ -562,7 +562,7 @@ export const Navbar: React.FC = () => {
                 fontSize: '1rem',
                 fontWeight: 800,
                 letterSpacing: '0.15em',
-                color: activePage === 'home' ? '#D4AF37' : '#FFFFFF',
+                color: activePage === 'home' ? '#5c81b3' : '#111111',
                 background: 'none',
                 border: 'none',
                 cursor: 'pointer',
@@ -573,12 +573,12 @@ export const Navbar: React.FC = () => {
               }}
             >
               <span>HOME</span>
-              {activePage === 'home' && <span style={{ color: '#D4AF37', fontSize: '0.8rem' }}>●</span>}
+              {activePage === 'home' && <span style={{ color: '#5c81b3', fontSize: '0.8rem' }}>●</span>}
             </button>
 
             {/* Shop Collections Grid Accordion */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '4px' }}>
-              <span style={{ fontSize: '0.725rem', fontWeight: 800, letterSpacing: '0.18em', color: '#D4AF37', textTransform: 'uppercase' }}>
+              <span style={{ fontSize: '0.725rem', fontWeight: 800, letterSpacing: '0.18em', color: '#5c81b3', textTransform: 'uppercase' }}>
                 SHOP COLLECTIONS
               </span>
 
@@ -589,10 +589,10 @@ export const Navbar: React.FC = () => {
                     onClick={() => handleCategorySelect(cat.slug)}
                     style={{
                       padding: '12px 14px',
-                      backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                      backgroundColor: '#F8F9FA',
+                      border: '1px solid #E2E8F0',
                       borderRadius: '8px',
-                      color: '#FFFFFF',
+                      color: '#111111',
                       fontSize: '0.8rem',
                       fontWeight: 700,
                       letterSpacing: '0.1em',
@@ -605,7 +605,7 @@ export const Navbar: React.FC = () => {
                     }}
                   >
                     <span>{cat.title}</span>
-                    <span style={{ fontSize: '0.75rem', opacity: 0.5 }}>→</span>
+                    <span style={{ fontSize: '0.75rem', color: '#5c81b3' }}>→</span>
                   </button>
                 ))}
 
@@ -614,10 +614,10 @@ export const Navbar: React.FC = () => {
                   style={{
                     gridColumn: 'span 2',
                     padding: '12px 14px',
-                    backgroundColor: 'rgba(212, 175, 55, 0.15)',
-                    border: '1px solid rgba(212, 175, 55, 0.4)',
+                    backgroundColor: 'rgba(92, 129, 179, 0.12)',
+                    border: '1px solid #5c81b3',
                     borderRadius: '8px',
-                    color: '#D4AF37',
+                    color: '#5c81b3',
                     fontSize: '0.8rem',
                     fontWeight: 800,
                     letterSpacing: '0.12em',
@@ -638,7 +638,7 @@ export const Navbar: React.FC = () => {
                 fontSize: '1rem',
                 fontWeight: 800,
                 letterSpacing: '0.15em',
-                color: activePage === 'about' ? '#D4AF37' : '#FFFFFF',
+                color: activePage === 'about' ? '#5c81b3' : '#111111',
                 background: 'none',
                 border: 'none',
                 cursor: 'pointer',
@@ -656,7 +656,7 @@ export const Navbar: React.FC = () => {
                 fontSize: '1rem',
                 fontWeight: 800,
                 letterSpacing: '0.15em',
-                color: activePage === 'contact' ? '#D4AF37' : '#FFFFFF',
+                color: activePage === 'contact' ? '#5c81b3' : '#111111',
                 background: 'none',
                 border: 'none',
                 cursor: 'pointer',
@@ -685,10 +685,10 @@ export const Navbar: React.FC = () => {
                 style={{
                   flex: 1,
                   padding: '12px 16px',
-                  backgroundColor: 'rgba(255, 255, 255, 0.08)',
-                  border: '1px solid rgba(255, 255, 255, 0.15)',
+                  backgroundColor: '#F4F4F6',
+                  border: '1px solid #E2E8F0',
                   borderRadius: '8px',
-                  color: '#FFFFFF',
+                  color: '#111111',
                   fontSize: '0.8rem',
                   fontWeight: 700,
                   letterSpacing: '0.1em',
@@ -699,7 +699,7 @@ export const Navbar: React.FC = () => {
                   gap: '8px',
                 }}
               >
-                <User size={16} style={{ color: '#D4AF37' }} />
+                <User size={16} style={{ color: '#5c81b3' }} />
                 <span>{isAuthenticated ? 'MY ACCOUNT' : 'LOG IN'}</span>
               </button>
 
@@ -712,10 +712,10 @@ export const Navbar: React.FC = () => {
                 style={{
                   flex: 1,
                   padding: '12px 16px',
-                  backgroundColor: 'rgba(255, 255, 255, 0.08)',
-                  border: '1px solid rgba(255, 255, 255, 0.15)',
+                  backgroundColor: '#F4F4F6',
+                  border: '1px solid #E2E8F0',
                   borderRadius: '8px',
-                  color: '#FFFFFF',
+                  color: '#111111',
                   fontSize: '0.8rem',
                   fontWeight: 700,
                   letterSpacing: '0.1em',
@@ -726,14 +726,14 @@ export const Navbar: React.FC = () => {
                   gap: '8px',
                 }}
               >
-                <Heart size={16} style={{ color: '#E05D5D' }} />
+                <Heart size={16} style={{ color: '#5c81b3' }} />
                 <span>WISHLIST ({wishlist.length})</span>
               </button>
             </div>
 
             {/* Bottom Promo Note */}
             <div style={{ textAlign: 'center', marginTop: '6px' }}>
-              <span style={{ fontSize: '0.675rem', color: '#A0A0A0', letterSpacing: '0.12em', textTransform: 'uppercase' }}>
+              <span style={{ fontSize: '0.675rem', color: '#5c81b3', letterSpacing: '0.12em', textTransform: 'uppercase', fontWeight: 700 }}>
                 ✨ COMPLIMENTARY EXPRESS SHIPPING OVER ₹2,500
               </span>
             </div>
