@@ -128,7 +128,7 @@ export const CartDrawer: React.FC = () => {
             {remainingForFreeShipping > 0 ? (
               <span>Add <strong>{currency}{remainingForFreeShipping.toFixed(0)}</strong> more for <strong>FREE Express Shipping</strong></span>
             ) : (
-              <span style={{ color: '#2B7A4B' }}>🎉 You unlocked FREE Express Worldwide Shipping!</span>
+              <span style={{ color: '#2B7A4B' }}>🎉 You unlocked FREE Express All India Shipping!</span>
             )}
           </div>
           <div style={{ width: '100%', height: '6px', backgroundColor: 'rgba(197, 160, 89, 0.25)', borderRadius: '3px', overflow: 'hidden' }}>
@@ -169,7 +169,7 @@ export const CartDrawer: React.FC = () => {
                 />
                 <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                   <div>
-                    <h4 
+                    <h4
                       style={{ fontFamily: 'var(--font-serif)', fontSize: '1.05rem', fontWeight: 600, lineHeight: 1.2 }}
                       dangerouslySetInnerHTML={{ __html: item.product.name }}
                     />

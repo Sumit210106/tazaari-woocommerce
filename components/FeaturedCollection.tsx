@@ -133,8 +133,8 @@ export const FeaturedCollection: React.FC = () => {
               },
               {
                 icon: <ShieldCheck size={20} style={{ color: '#D4AF37' }} />,
-                title: 'Heavyweight Quality',
-                subtitle: '300 GSM combed cotton weave'
+                title: 'Limited Pieces',
+                subtitle: 'Ethically made in small batches'
               },
               {
                 icon: <PackageCheck size={20} style={{ color: '#D4AF37' }} />,

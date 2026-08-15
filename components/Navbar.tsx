@@ -42,7 +42,7 @@ export const Navbar: React.FC = () => {
   const [modalError, setModalError] = useState('');
   const [modalSuccess, setModalSuccess] = useState('');
   const [modalLoading, setModalLoading] = useState(false);
-  
+
   const { user, login, isAuthenticated } = useAuth();
   const router = useRouter();
 
@@ -140,7 +140,7 @@ export const Navbar: React.FC = () => {
             <div className="tazaari-marquee-group">
               <span className="tazaari-marquee-item">
                 <Sparkles size={11} style={{ color: 'var(--color-gold)' }} />
-                COMPLIMENTARY EXPRESS WORLDWIDE SHIPPING OVER ₹2,500
+                COMPLIMENTARY EXPRESS All India SHIPPING OVER ₹2,500
               </span>
               <span>•</span>
               <span>USE CODE: <strong style={{ color: 'var(--color-gold)' }}>TAZAARI15</strong> FOR 15% OFF YOUR FIRST ORDER</span>
@@ -154,7 +154,7 @@ export const Navbar: React.FC = () => {
             <div className="tazaari-marquee-group">
               <span className="tazaari-marquee-item">
                 <Sparkles size={11} style={{ color: 'var(--color-gold)' }} />
-                COMPLIMENTARY EXPRESS WORLDWIDE SHIPPING OVER ₹2,500
+                COMPLIMENTARY EXPRESS All India SHIPPING OVER ₹2,500
               </span>
               <span>•</span>
               <span>USE CODE: <strong style={{ color: 'var(--color-gold)' }}>TAZAARI15</strong> FOR 15% OFF YOUR FIRST ORDER</span>
@@ -261,10 +261,10 @@ export const Navbar: React.FC = () => {
                         overflow: 'hidden',
                         cursor: 'pointer'
                       }}
-                      onClick={() => handleCategorySelect('all')}
+                        onClick={() => handleCategorySelect('all')}
                       >
-                        <img 
-                          src="/images/23.avif" 
+                        <img
+                          src="/images/23.avif"
                           alt="Luxury Streetwear Collection"
                           className="mega-promo-img"
                         />
@@ -363,7 +363,7 @@ export const Navbar: React.FC = () => {
           </div>
 
           {/* CENTER: Logo */}
-          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <div className="tazaari-nav-center">
             <button
               onClick={() => handleNavClick('home')}
               style={{ background: 'transparent', border: 0, padding: 0, cursor: 'pointer', display: 'flex', alignItems: 'center' }}
@@ -373,8 +373,8 @@ export const Navbar: React.FC = () => {
                 src="/logo-white-transparent.png"
                 alt="TAZAARI"
                 style={{
-                  height: isScrolled ? '32px' : '40px',
-                  maxWidth: '180px',
+                  height: isScrolled ? '26px' : '32px',
+                  maxWidth: '160px',
                   objectFit: 'contain',
                   display: 'block',
                   transition: 'height 0.3s ease'
@@ -388,7 +388,7 @@ export const Navbar: React.FC = () => {
             {/* Search Toggle */}
             <div style={{ position: 'relative' }}>
               {isSearchOpen ? (
-                <form 
+                <form
                   onSubmit={handleSearchSubmit}
                   className="tazaari-search-form"
                 >
@@ -407,12 +407,12 @@ export const Navbar: React.FC = () => {
                     className="tazaari-search-input"
                     autoFocus
                   />
-                  <button 
+                  <button
                     type="button"
                     onClick={() => {
                       setSearchQuery('');
                       setIsSearchOpen(false);
-                    }} 
+                    }}
                     className="tazaari-search-close"
                     aria-label="Close search"
                   >
@@ -753,8 +753,8 @@ export const Navbar: React.FC = () => {
           padding: '20px'
         }}>
           {/* Blur Overlay */}
-          <div 
-            onClick={() => setIsUserModalOpen(false)} 
+          <div
+            onClick={() => setIsUserModalOpen(false)}
             style={{
               position: 'fixed',
               inset: 0,
@@ -763,7 +763,7 @@ export const Navbar: React.FC = () => {
               cursor: 'pointer'
             }}
           />
- 
+
           {/* Modal Container */}
           <div style={{
             position: 'relative',
@@ -780,14 +780,14 @@ export const Navbar: React.FC = () => {
             gap: '24px',
             fontFamily: 'var(--font-sans)'
           }}>
-            
+
             {/* Logo and Close Button */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div style={{ transform: 'scale(0.85)', transformOrigin: 'left center' }}>
                 <TazaariLogo color="#121214" height={36} />
               </div>
-              <button 
-                onClick={() => setIsUserModalOpen(false)} 
+              <button
+                onClick={() => setIsUserModalOpen(false)}
                 style={{
                   border: 0,
                   background: 'transparent',
@@ -884,11 +884,11 @@ export const Navbar: React.FC = () => {
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                   <div>
                     <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.08em', marginBottom: '6px', color: '#666666', textTransform: 'uppercase' }}>First Name</label>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       value={modalFirstName}
                       onChange={(e) => setModalFirstName(e.target.value)}
-                      placeholder="Sumit" 
+                      placeholder="Sumit"
                       style={{
                         width: '100%',
                         padding: '10px 12px',
@@ -901,11 +901,11 @@ export const Navbar: React.FC = () => {
                   </div>
                   <div>
                     <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.08em', marginBottom: '6px', color: '#666666', textTransform: 'uppercase' }}>Last Name</label>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       value={modalLastName}
                       onChange={(e) => setModalLastName(e.target.value)}
-                      placeholder="Nayak" 
+                      placeholder="Nayak"
                       style={{
                         width: '100%',
                         padding: '10px 12px',
@@ -921,12 +921,12 @@ export const Navbar: React.FC = () => {
 
               <div>
                 <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.08em', marginBottom: '6px', color: '#666666', textTransform: 'uppercase' }}>Email Address</label>
-                <input 
-                  type="email" 
-                  required 
+                <input
+                  type="email"
+                  required
                   value={modalEmail}
                   onChange={(e) => setModalEmail(e.target.value)}
-                  placeholder="vip@tazaari.com" 
+                  placeholder="vip@tazaari.com"
                   style={{
                     width: '100%',
                     padding: '10px 12px',
@@ -940,12 +940,12 @@ export const Navbar: React.FC = () => {
 
               <div>
                 <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.08em', marginBottom: '6px', color: '#666666', textTransform: 'uppercase' }}>Password</label>
-                <input 
-                  type="password" 
-                  required 
+                <input
+                  type="password"
+                  required
                   value={modalPassword}
                   onChange={(e) => setModalPassword(e.target.value)}
-                  placeholder="••••••••" 
+                  placeholder="••••••••"
                   style={{
                     width: '100%',
                     padding: '10px 12px',
@@ -957,8 +957,8 @@ export const Navbar: React.FC = () => {
                 />
               </div>
 
-              <button 
-                type="submit" 
+              <button
+                type="submit"
                 disabled={modalLoading}
                 style={{
                   width: '100%',
@@ -1052,23 +1052,31 @@ export const Navbar: React.FC = () => {
           max-width: 1380px;
           margin: 0 auto;
           padding: 0 24px;
-          display: flex;
+          display: grid;
+          grid-template-columns: 1fr auto 1fr;
           align-items: center;
-          justify-content: space-between;
           gap: 20px;
         }
 
         .tazaari-nav-left {
           display: flex;
           align-items: center;
-          gap: 32px;
+          gap: 24px;
+          justify-self: start;
+        }
+
+        .tazaari-nav-center {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          justify-self: center;
         }
 
         .tazaari-nav-link {
           font-family: var(--font-sans);
-          font-size: 0.85rem;
-          font-weight: 700;
-          letter-spacing: 0.15em;
+          font-size: 0.75rem;
+          font-weight: 600;
+          letter-spacing: 0.14em;
           text-transform: uppercase;
           color: #ffffff;
           background: transparent;
@@ -1077,7 +1085,7 @@ export const Navbar: React.FC = () => {
           padding-bottom: 4px;
           transition: all 0.25s ease-in-out;
           border-bottom: 2px solid transparent;
-          opacity: 0.8;
+          opacity: 0.85;
           text-decoration: none;
         }
 
@@ -1109,12 +1117,14 @@ export const Navbar: React.FC = () => {
 
         .tazaari-mobile-toggle {
           display: none;
+          justify-self: start;
         }
 
         .tazaari-nav-right {
           display: flex;
           align-items: center;
-          gap: 20px;
+          gap: 16px;
+          justify-self: end;
         }
 
         .tazaari-action-btn {
@@ -1165,7 +1175,7 @@ export const Navbar: React.FC = () => {
         /* Mega dropdown elements */
         .mega-title-btn {
           font-family: var(--font-sans);
-          font-size: 0.8125rem;
+          font-size: 0.725rem;
           font-weight: 800;
           letter-spacing: 0.14em;
           color: #121214;
@@ -1187,7 +1197,7 @@ export const Navbar: React.FC = () => {
           background: none;
           border: none;
           padding: 0;
-          font-size: 0.8125rem;
+          font-size: 0.75rem;
           font-weight: 500;
           color: #555555;
           cursor: pointer;

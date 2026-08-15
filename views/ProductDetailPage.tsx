@@ -319,18 +319,46 @@ export const ProductDetailPage: React.FC = () => {
             itemScope itemType="https://schema.org/Product">
 
             {/* ═══════════════════════════════════ LEFT: Gallery ═════════════════════ */}
-            <div>
-              {/* Main Image */}
+            <div className="product-pdp-gallery">
+              {/* Left Column: Vertical Thumbnails Stack */}
+              {product.images.length > 1 && (
+                <div className="pdp-thumb-col">
+                  {product.images.map((img, idx) => (
+                    <button
+                      key={idx}
+                      className={`pdp-thumb-btn ${selectedImage === idx ? 'active' : ''}`}
+                      onClick={() => { setSelectedImage(idx); }}
+                      aria-label={`View image ${idx + 1}`}
+                    >
+                      <img
+                        src={product.thumbnails[idx] || img}
+                        alt={`${product.name} – view ${idx + 1}`}
+                        loading="lazy"
+                      />
+                    </button>
+                  ))}
+
+                  {/* Scroll down indicator arrow button */}
+                  {product.images.length > 3 && (
+                    <button
+                      className="pdp-thumb-scroll-btn"
+                      onClick={() => {
+                        setSelectedImage(prev => (prev === product.images.length - 1 ? 0 : prev + 1));
+                      }}
+                      aria-label="Next image"
+                      title="Next image"
+                    >
+                      <ChevronDown size={16} style={{ color: '#555555' }} />
+                    </button>
+                  )}
+                </div>
+              )}
+
+              {/* Right Column: Main Image Showcase */}
               <div
                 ref={imgRef}
+                className="pdp-main-img-box"
                 onClick={() => setIsLightboxOpen(true)}
-                style={{
-                  position: 'relative', width: '100%', paddingTop: '133.33%',
-                  backgroundColor: '#FAF8F5', overflow: 'hidden', marginBottom: '16px',
-                  cursor: 'zoom-in',
-                  boxShadow: '0 6px 24px rgba(0,0,0,0.06)',
-                  borderRadius: '4px'
-                }}
               >
                 <img
                   src={product.images[selectedImage] || product.images[0]}
@@ -339,19 +367,14 @@ export const ProductDetailPage: React.FC = () => {
                   loading="eager"
                   fetchPriority="high"
                   itemProp="image"
-                  style={{
-                    position: 'absolute', inset: 0, width: '100%', height: '100%',
-                    objectFit: 'cover',
-                    objectPosition: 'top center',
-                    transition: 'transform 0.4s ease',
-                  }}
+                  className="pdp-main-img"
                 />
                 {product.onSale && (
                   <div style={{
-                    position: 'absolute', top: '14px', left: '14px',
+                    position: 'absolute', top: '16px', left: '16px',
                     backgroundColor: 'var(--color-accent-rose)', color: '#FFFFFF',
                     fontFamily: 'var(--font-sans)', fontSize: '0.65rem', fontWeight: 900,
-                    letterSpacing: '0.18em', padding: '5px 10px', zIndex: 2
+                    letterSpacing: '0.18em', padding: '6px 12px', zIndex: 2, borderRadius: '4px'
                   }}>
                     SALE – {discount}% OFF
                   </div>
@@ -366,41 +389,10 @@ export const ProductDetailPage: React.FC = () => {
                     </span>
                   </div>
                 )}
-                <div style={{ position: 'absolute', bottom: '12px', right: '12px', zIndex: 2, backgroundColor: 'rgba(255,255,255,0.85)', padding: '6px', borderRadius: '50%', display: 'flex' }}>
+                <div className="pdp-zoom-btn">
                   <ZoomIn size={18} style={{ color: '#111111' }} />
                 </div>
               </div>
-
-              {/* Thumbnail Strip */}
-              {product.images.length > 1 && (
-                <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-                  {product.images.map((img, idx) => (
-                    <button
-                      key={idx}
-                      className="product-thumb-btn"
-                      onClick={() => { setSelectedImage(idx); }}
-                      style={{
-                        width: '76px', height: '96px', padding: 0, border: 'none',
-                        outline: selectedImage === idx ? '2px solid #5c81b3' : '1px solid #EAE6E1',
-                        outlineOffset: '2px',
-                        overflow: 'hidden', cursor: 'pointer',
-                        opacity: selectedImage === idx ? 1 : 0.65,
-                        backgroundColor: '#FAF8F5',
-                        borderRadius: '4px',
-                        transition: 'all 0.2s ease'
-                      }}
-                      aria-label={`View image ${idx + 1}`}
-                    >
-                      <img
-                        src={product.thumbnails[idx] || img}
-                        alt={`${product.name} – view ${idx + 1}`}
-                        loading="lazy"
-                        style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center', display: 'block' }}
-                      />
-                    </button>
-                  ))}
-                </div>
-              )}
             </div>
 
             {/* ═══════════════════════════════════ RIGHT: Info & Purchase ═══════════ */}
@@ -434,7 +426,7 @@ export const ProductDetailPage: React.FC = () => {
               </h1>
 
               {/* Rating */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' }}>
+              {/* <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' }}>
                 <div style={{ display: 'flex', gap: '2px' }}>
                   {[...Array(5)].map((_, i) => (
                     <Star
@@ -444,12 +436,13 @@ export const ProductDetailPage: React.FC = () => {
                     />
                   ))}
                 </div>
-                <span style={{ fontFamily: 'var(--font-sans)', fontSize: '0.8rem', color: '#888888' }}>
+                {/* <span style={{ fontFamily: 'var(--font-sans)', fontSize: '0.8rem', color: '#888888' }}>
                   {product.rating > 0
                     ? `${product.rating} (${product.reviewsCount} review${product.reviewsCount !== 1 ? 's' : ''})`
                     : 'Be the first to review'}
-                </span>
-              </div>
+                </span> 
+              </div> 
+              */}
 
               {/* Price block */}
               <div
@@ -875,7 +868,6 @@ export const ProductDetailPage: React.FC = () => {
                 maxHeight: '85vh',
                 maxWidth: '85vw',
                 objectFit: 'contain',
-                borderRadius: '4px',
                 boxShadow: '0 20px 60px rgba(0,0,0,0.5)'
               }}
             />
@@ -918,6 +910,153 @@ export const ProductDetailPage: React.FC = () => {
           )}
         </div>
       )}
+
+      {/* ── STYLING FOR VERTICAL GALLERY ── */}
+      <style jsx>{`
+        .product-pdp-gallery {
+          display: flex;
+          gap: 20px;
+          align-items: flex-start;
+          width: 100%;
+        }
+
+        .pdp-thumb-col {
+          display: flex;
+          flex-direction: column;
+          gap: 14px;
+          width: 86px;
+          flex-shrink: 0;
+        }
+
+        .pdp-thumb-btn {
+          width: 86px;
+          height: 110px;
+          padding: 0;
+          border: 1px solid #EAE6E1;
+          border-radius: 12px;
+          overflow: hidden;
+          cursor: pointer;
+          opacity: 0.7;
+          background-color: #FAF8F5;
+          transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+          display: block;
+        }
+
+        .pdp-thumb-btn:hover {
+          opacity: 1;
+          border-color: #111111;
+        }
+
+        .pdp-thumb-btn.active {
+          opacity: 1;
+          border: 2px solid #111111;
+          box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+        }
+
+        .pdp-thumb-btn img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          object-position: top center;
+          display: block;
+        }
+
+        .pdp-thumb-scroll-btn {
+          width: 34px;
+          height: 34px;
+          border-radius: 50%;
+          background-color: #FAF8F5;
+          border: 1px solid #EAE6E1;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin: 4px auto 0;
+          cursor: pointer;
+          transition: all 0.2s ease;
+        }
+
+        .pdp-thumb-scroll-btn:hover {
+          background-color: #111111;
+          border-color: #111111;
+        }
+
+        .pdp-thumb-scroll-btn:hover :global(svg) {
+          color: #FFFFFF !important;
+        }
+
+        .pdp-main-img-box {
+          flex: 1;
+          position: relative;
+          width: 100%;
+          padding-top: 130%;
+          background-color: #FAF8F5;
+          border-radius: 16px;
+          overflow: hidden;
+          cursor: zoom-in;
+          box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
+        }
+
+        .pdp-main-img {
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          object-position: top center;
+          transition: transform 0.4s ease;
+        }
+
+        .pdp-zoom-btn {
+          position: absolute;
+          bottom: 16px;
+          right: 16px;
+          z-index: 2;
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          background-color: #FFFFFF;
+          box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .pdp-zoom-btn:hover {
+          transform: scale(1.08);
+          box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18);
+        }
+
+        @media (max-width: 768px) {
+          .product-pdp-gallery {
+            flex-direction: column-reverse;
+            gap: 14px;
+          }
+
+          .pdp-thumb-col {
+            flex-direction: row;
+            width: 100%;
+            overflow-x: auto;
+            padding-bottom: 6px;
+          }
+
+          .pdp-thumb-btn {
+            width: 72px;
+            height: 92px;
+            border-radius: 8px;
+            flex-shrink: 0;
+          }
+
+          .pdp-thumb-scroll-btn {
+            display: none;
+          }
+
+          .pdp-main-img-box {
+            border-radius: 12px;
+          }
+        }
+      `}</style>
     </>
   );
 };
