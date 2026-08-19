@@ -134,12 +134,74 @@ const parsePaise = (paise: string, minorUnit: number): number => {
   return num / Math.pow(10, minorUnit);
 };
 
+const SIZE_ORDER_MAP: Record<string, number> = {
+  '3XS': 5,
+  'XXXS': 5,
+  '2XS': 10,
+  'XXS': 10,
+  'XS': 20,
+  'EXTRA SMALL': 20,
+  'S': 30,
+  'SMALL': 30,
+  'M': 40,
+  'MEDIUM': 40,
+  'L': 50,
+  'LARGE': 50,
+  'XL': 60,
+  'EXTRA LARGE': 60,
+  'XXL': 70,
+  '2XL': 70,
+  '3XL': 80,
+  'XXXL': 80,
+  '4XL': 90,
+  'XXXXL': 90,
+  '5XL': 100,
+  'XXXXXL': 100,
+  '6XL': 110,
+  '7XL': 120,
+  'FREE SIZE': 990,
+  'ONE SIZE': 990,
+  'FREE': 990,
+  'OS': 990,
+};
+
+/** Utility function to sort sizes in standard order (XS, S, M, L, XL, XXL, 3XL, etc.) */
+export function sortSizes(sizes: string[] = []): string[] {
+  if (!sizes || sizes.length === 0) return [];
+
+  const getRank = (sizeStr: string): number => {
+    const clean = sizeStr.trim().toUpperCase();
+    if (SIZE_ORDER_MAP[clean] !== undefined) {
+      return SIZE_ORDER_MAP[clean];
+    }
+    const num = Number(clean);
+    if (!isNaN(num)) {
+      return 1000 + num;
+    }
+    const matchNum = clean.match(/\d+/);
+    if (matchNum) {
+      return 2000 + parseInt(matchNum[0], 10);
+    }
+    return 3000;
+  };
+
+  return [...sizes].sort((a, b) => {
+    const rankA = getRank(a);
+    const rankB = getRank(b);
+    if (rankA !== rankB) {
+      return rankA - rankB;
+    }
+    return a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' });
+  });
+}
+
 export function normalizeProduct(raw: WooProduct): NormalizedProduct {
   const minorUnit = raw.prices.currency_minor_unit ?? 2;
 
-  // Parse sizes from attributes
+  // Parse sizes from attributes and sort them in logical order (XS, S, M, L, XL, etc.)
   const sizeAttr = raw.attributes.find(a => a.name.toLowerCase() === 'size');
-  const sizes = sizeAttr ? sizeAttr.terms.map(t => t.name.toUpperCase()) : [];
+  const rawSizes = sizeAttr ? sizeAttr.terms.map(t => t.name.toUpperCase()) : [];
+  const sizes = sortSizes(rawSizes);
 
   // Derive category slug (first category)
   const primaryCategorySlug = raw.categories.length > 0

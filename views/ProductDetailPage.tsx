@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useCart } from '../context/CartContext';
-import type { NormalizedProduct } from '../types/product';
+import { NormalizedProduct, sortSizes } from '../types/product';
 import { fetchProducts } from '../services/wooApi';
 import ProductCard from '../components/ProductCard';
 import {
@@ -128,10 +128,12 @@ export const ProductDetailPage: React.FC = () => {
 
   useProductMeta(product);
 
+  const sortedSizes = sortSizes(product?.sizes || []);
+
   // Reset on product change
   useEffect(() => {
     setSelectedImage(0);
-    setSelectedSize(product?.sizes[0] || '');
+    setSelectedSize(sortedSizes[0] || '');
     setQuantity(1);
     setRelatedProducts([]);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -166,7 +168,7 @@ export const ProductDetailPage: React.FC = () => {
     );
   }
 
-  const activeSize = selectedSize || product.sizes[0] || 'Standard';
+  const activeSize = selectedSize || sortedSizes[0] || 'Standard';
   const wishlisted = isInWishlist(product.id);
   const displayPrice = `₹${product.price.toLocaleString('en-IN')}`;
   const displayOriginal = product.onSale && product.originalPrice !== product.price
@@ -483,7 +485,7 @@ export const ProductDetailPage: React.FC = () => {
               )}
 
               {/* ── Size Selector ── */}
-              {product.sizes.length > 0 && (
+              {sortedSizes.length > 0 && (
                 <div style={{ marginBottom: '28px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
                     <span style={{ fontFamily: 'var(--font-sans)', fontSize: '0.8rem', fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#111111' }}>
@@ -498,7 +500,7 @@ export const ProductDetailPage: React.FC = () => {
                     </button>
                   </div>
                   <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                    {product.sizes.map(size => (
+                    {sortedSizes.map(size => (
                       <button
                         key={size}
                         className="size-btn"

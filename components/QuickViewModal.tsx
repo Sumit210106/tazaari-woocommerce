@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { useCart } from '../context/CartContext';
+import { sortSizes } from '../types/product';
 import { X, Star, Heart, ShoppingBag, Truck, RefreshCw, ShieldCheck } from 'lucide-react';
 
 export const QuickViewModal: React.FC = () => {
@@ -19,7 +20,8 @@ export const QuickViewModal: React.FC = () => {
 
   if (!quickViewProduct) return null;
 
-  const activeSize = selectedSize || quickViewProduct.sizes[0] || '';
+  const sortedSizes = sortSizes(quickViewProduct.sizes);
+  const activeSize = selectedSize || sortedSizes[0] || '';
   const isWishlisted = isInWishlist(quickViewProduct.id);
   const displayPrice = `₹${quickViewProduct.price.toLocaleString('en-IN')}`;
   const displayOriginal = quickViewProduct.onSale && quickViewProduct.originalPrice !== quickViewProduct.price
@@ -167,7 +169,7 @@ export const QuickViewModal: React.FC = () => {
                 </button>
               </div>
             </div>
-            {quickViewProduct.sizes.length > 0 && (
+            {sortedSizes.length > 0 && (
               <div style={{ marginBottom: '24px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
                   <span style={{ fontSize: '0.8125rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
@@ -178,7 +180,7 @@ export const QuickViewModal: React.FC = () => {
                   </span>
                 </div>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                  {quickViewProduct.sizes.map(size => (
+                  {sortedSizes.map(size => (
                     <button
                       key={size}
                       onClick={() => setSelectedSize(size)}

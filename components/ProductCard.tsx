@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useCart } from '../context/CartContext';
-import type { NormalizedProduct as Product } from '../types/product';
+import { NormalizedProduct as Product, sortSizes } from '../types/product';
 import { Heart, Eye, ShoppingBag, Check, Star } from 'lucide-react';
 
 export interface ProductCardProps {
@@ -13,20 +13,6 @@ export interface ProductCardProps {
   className?: string;
   style?: React.CSSProperties;
 }
-
-const SIZE_ORDER = ['XS', 'S', 'M', 'L', 'XL', 'XXL', '2XL', '3XL', '4XL'];
-
-const sortSizes = (sizes?: string[]): string[] => {
-  if (!sizes || sizes.length === 0) return [];
-  return [...sizes].sort((a, b) => {
-    const indexA = SIZE_ORDER.indexOf(a.trim().toUpperCase());
-    const indexB = SIZE_ORDER.indexOf(b.trim().toUpperCase());
-    if (indexA !== -1 && indexB !== -1) return indexA - indexB;
-    if (indexA !== -1) return -1;
-    if (indexB !== -1) return 1;
-    return a.localeCompare(b);
-  });
-};
 
 export const ProductCard: React.FC<ProductCardProps> = ({
   product,
